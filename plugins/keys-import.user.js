@@ -58,10 +58,16 @@ window.plugin.importkeys.openDialog = function(event) {
     return;
   }
   var handshakeUrl = window.plugin.importkeys.APPSPOT_URL + '/handshake?json='
-    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-05-03T19:32:11Z 929c2cce62eb opt', 'deviceSoftwareVersion': '4.1.1'}));
+    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-05-23T16:34:52Z fac47da11030 opt', 'deviceSoftwareVersion': '4.1.1'}));
   var div = document.createElement('div');
   var span = document.createElement('span');
-  span.appendChild(document.createTextNode('Log in below to import your Ingress inventory'));
+  span.appendChild(document.createTextNode('Log in below to import your Ingress inventory. (Or try again in a '));
+  var a = document.createElement('a');
+  a.appendChild(document.createTextNode('new window'));
+  a.setAttribute('href', handshakeUrl);
+  a.setAttribute('target', '_blank');
+  span.appendChild(a);
+  span.appendChild(document.createTextNode(')'));
   div.appendChild(span);
   var br = document.createElement('br');
   div.appendChild(br);
