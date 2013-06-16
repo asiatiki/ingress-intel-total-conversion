@@ -101,6 +101,27 @@ a:hover {
   cursor: help;
 }
 
+
+/* base layer selection - first column */
+.leaflet-control-layers-base {
+  float: left;
+}
+
+/* overlays layer selection - 2nd column */
+.leaflet-control-layers-overlays {
+  float: left;
+  margin-left: 8px;
+  border-left: 1px solid #DDDDDD;
+  padding-left: 8px;
+}
+
+/* hide the usual seperator */
+.leaflet-control-layers-separator {
+  display: none;
+}
+
+
+
 .help {
   cursor: help;
 }
@@ -699,7 +720,6 @@ h3 {
 /* Dialogs
  */
 .ui-tooltip, .ui-dialog {
-  max-width: 300px;
   position: absolute;
   z-index: 9999;
   background-color: rgba(8, 48, 78, 0.9);
@@ -707,6 +727,10 @@ h3 {
   color: #eee;
   font: 13px/15px Roboto, Arial, Helvetica, sans-serif;
   padding: 2px 4px;
+}
+
+.ui-tooltip {
+  max-width: 300px;
 }
 
 .ui-widget-overlay {
@@ -800,6 +824,7 @@ h3 {
   overflow-x: hidden;
   max-height: 600px !important;
   max-width: 700px !important;
+  position: relative;
 }
 
 .ui-dialog-content-hidden {

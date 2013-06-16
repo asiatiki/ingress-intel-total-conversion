@@ -30,29 +30,49 @@ window.getModDetails = function(d) {
   var modsTitle = [];
   var modsColor = [];
   $.each(d.portalV2.linkedModArray, function(ind, mod) {
-    if(!mod) {
-      mods.push('');
-      modsTitle.push('');
-      modsColor.push('#000');
-    } else if(mod.type === 'RES_SHIELD') {
+    var modName = '';
+    var modTooltip = '';
+    var modColor = '#000';
 
-      var title = mod.rarity.capitalize() + ' ' + mod.displayName + '\n';
-      title += 'Installed by: '+ getPlayerName(mod.installingUser);
+    if (mod) {
+      // all mods seem to follow the same pattern for the data structure
+      // but let's try and make this robust enough to handle possible future differences
 
-      title += '\nStats:';
-      for (var key in mod.stats) {
-        if (!mod.stats.hasOwnProperty(key)) continue;
-        title += '\n+' +  mod.stats[key] + ' ' + key.capitalize();
+      if (mod.displayName) {
+        modName = mod.displayName;
+      } else if (mod.type) {
+        modName = mod.type;
+      } else {
+        modName = '(unknown mod)';
       }
 
-      mods.push(mod.rarity.capitalize().replace('_', ' ') + ' ' + mod.displayName);
-      modsTitle.push(title);
-      modsColor.push(COLORS_MOD[mod.rarity]);
-    } else {
-      mods.push(mod.type);
-      modsTitle.push('Unknown mod. No further details available.');
-      modsColor.push('#FFF');
+      if (mod.rarity) {
+        modName = mod.rarity.capitalize().replace(/_/g,' ') + ' ' + modName;
+      }
+
+      modTooltip = modName + '\n';
+      if (mod.installingUser) {
+        modTooltip += 'Installed by: '+ getPlayerName(mod.installingUser) + '\n';
+      }
+
+      if (mod.stats) {
+        modTooltip += 'Stats:';
+        for (var key in mod.stats) {
+          if (!mod.stats.hasOwnProperty(key)) continue;
+          modTooltip += '\n+' +  mod.stats[key] + ' ' + key.capitalize().replace(/_/g,' ');
+        }
+      }
+
+      if (mod.rarity) {
+        modColor = COLORS_MOD[mod.rarity];
+      } else {
+        modColor = '#fff';
+      }
     }
+
+    mods.push(modName);
+    modsTitle.push(modTooltip);
+    modsColor.push(modColor);
   });
 
   var t = '<span'+(modsTitle[0].length ? ' title="'+modsTitle[0]+'"' : '')+' style="color:'+modsColor[0]+'">'+mods[0]+'</span>'
@@ -111,7 +131,7 @@ window.getResonatorDetails = function(d) {
 // rotates clockwise. So, last one is 7 (southeast).
 window.renderResonatorDetails = function(slot, level, nrg, dist, nick) {
   if(level === 0) {
-    var meter = '<span class="meter" title="octant:\t' + OCTANTS[slot] + '"></span>';
+    var meter = '<span class="meter" title="octant:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot] + '"></span>';
   } else {
     var max = RESO_NRG[level];
     var fillGrade = nrg/max*100;
@@ -120,7 +140,7 @@ window.renderResonatorDetails = function(slot, level, nrg, dist, nick) {
             + 'level:\t'  + level + '\n'
             + 'distance:\t' + dist  + 'm\n'
             + 'owner:\t'  + nick  + '\n'
-            + 'octant:\t' + OCTANTS[slot];
+            + 'octant:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot];
 
     var style = 'width:'+fillGrade+'%; background:'+COLORS_LVL[level]+';';
 

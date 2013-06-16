@@ -10,7 +10,12 @@
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
+@@PLUGINSTART@@
+
+// PLUGIN START ////////////////////////////////////////////////////////
 
 /*********************************************************************************************************
 * Changelog:
@@ -22,13 +27,6 @@
 * 0.1.1 Added mouseover for portal location. Dirty hack to not show mousehover when the alert is fired.
 * 0.1.0 First public release
 *********************************************************************************************************/
-
-function wrapper() {
-// ensure plugin framework is there, even if iitc is not yet loaded
-if(typeof window.plugin !== 'function') window.plugin = function() {};
-
-
-// PLUGIN START ////////////////////////////////////////////////////////
 
 // use own namespace for plugin
 window.plugin.playersResonators = function() {};
@@ -106,16 +104,4 @@ var setup = function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
-if(window.iitcLoaded && typeof setup === 'function') {
-  setup();
-} else {
-  if(window.bootPlugins)
-    window.bootPlugins.push(setup);
-  else
-    window.bootPlugins = [setup];
-}
-} // wrapper end
-// inject code into site context
-var script = document.createElement('script');
-script.appendChild(document.createTextNode('('+ wrapper +')();'));
-(document.body || document.head || document.documentElement).appendChild(script);
+@@PLUGINEND@@

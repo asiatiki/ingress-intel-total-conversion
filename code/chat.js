@@ -41,16 +41,22 @@ window.chat._oldBBox = null;
 window.chat.genPostData = function(isFaction, storageHash, getOlderMsgs) {
   if(typeof isFaction !== 'boolean') throw('Need to know if public or faction chat.');
 
+  // get window bounds, and extend to the minimum chat radius
   chat._localRangeCircle.setLatLng(map.getCenter());
   var b = map.getBounds().extend(chat._localRangeCircle.getBounds());
-  var ne = b.getNorthEast();
-  var sw = b.getSouthWest();
 
-  // round bounds in order to ignore rounding errors
-  var bbs = $.map([ne.lat, ne.lng, sw.lat, sw.lng], function(x) { return Math.round(x*1E4) }).join();
-  if(chat._oldBBox && chat._oldBBox !== bbs) {
+  // set a current bounding box if none set so far
+  if (!chat._oldBBox) chat._oldBBox = b;
+
+  // to avoid unnecessary chat refreshes, a small difference compared to the previous bounding box
+  // is not considered different
+  var CHAT_BOUNDINGBOX_SAME_FACTOR = 0.1;
+  // if the old and new box contain each other, after expanding by the factor, don't reset chat
+  if (!(b.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(chat._oldBBox) && chat._oldBBox.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(b))) {
+    console.log('Bounding Box changed, chat will be cleared (old: '+chat._oldBBox.toBBoxString()+'; new: '+b.toBBoxString()+')');
+
     $('#chat > div').data('needsClearing', true);
-    console.log('Bounding Box changed, chat will be cleared (old: '+chat._oldBBox+' ; new: '+bbs+' )');
+
     // need to reset these flags now because clearing will only occur
     // after the request is finished – i.e. there would be one almost
     // useless request.
@@ -61,8 +67,9 @@ window.chat.genPostData = function(isFaction, storageHash, getOlderMsgs) {
     chat._public.data = {};
     chat._public.oldestTimestamp = -1;
     chat._public.newestTimestamp = -1;
+
+    chat._oldBBox = b;
   }
-  chat._oldBBox = bbs;
 
   var ne = b.getNorthEast();
   var sw = b.getSouthWest();
@@ -394,7 +401,10 @@ window.chat.renderDivider = function(text) {
 
 window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
   var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToString(time, true);
+  var tb = unixTimeToDateTimeString(time, true);
+  //add <small> tags around the milliseconds
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
   // help cursor via “#chat time”
   var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
   if ( msgToPlayer )
@@ -521,9 +531,9 @@ window.chat.chooseAnchor = function(t) {
 }
 
 window.chat.show = function(name) {
-        window.isSmartphone
-                ? $('#updatestatus').hide()
-                : $('#updatestatus').show();
+    window.isSmartphone()
+        ? $('#updatestatus').hide()
+        : $('#updatestatus').show();
     $('#chat, #chatinput').show();
     $('#map').css('visibility', 'hidden');
 
@@ -595,8 +605,6 @@ window.chat.setup = function() {
     if(scrollBottom(t) === 0) chat.requestPublic(false);
   });
 
-  chat.request();
-  window.addResumeFunction(chat.request);
   window.requests.addRefreshFunction(chat.request);
 
   var cls = PLAYER.team === 'ALIENS' ? 'enl' : 'res';

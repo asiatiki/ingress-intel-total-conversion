@@ -53,12 +53,39 @@ settings = buildSettings[buildName]
 utcTime = time.gmtime()
 buildDate = time.strftime('%Y-%m-%d-%H%M%S',utcTime)
 # userscripts have specific specifications for version numbers - the above date format doesn't match
-dateTimeVersion = time.strftime('%Y%m%d.%H%M%S',utcTime)
+dateTimeVersion = time.strftime('%Y%m%d.',utcTime) + time.strftime('%H%M%S',utcTime).lstrip('0')
 
 # extract required values from the settings entry
 resourceUrlBase = settings.get('resourceUrlBase')
 distUrlBase = settings.get('distUrlBase')
 buildMobile = settings.get('buildMobile')
+
+
+# plugin wrapper code snippets. handled as macros, to ensure that
+# 1. indentation caused by the "function wrapper()" doesn't apply to the plugin code body
+# 2. the wrapper is formatted correctly for removal by the IITC Mobile android app
+pluginWrapperStart = """
+function wrapper() {
+// ensure plugin framework is there, even if iitc is not yet loaded
+if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+"""
+pluginWrapperEnd = """
+if(window.iitcLoaded && typeof setup === 'function') {
+  setup();
+} else {
+  if(window.bootPlugins)
+    window.bootPlugins.push(setup);
+  else
+    window.bootPlugins = [setup];
+}
+} // wrapper end
+// inject code into site context
+var script = document.createElement('script');
+script.appendChild(document.createTextNode('('+ wrapper +')();'));
+(document.body || document.head || document.documentElement).appendChild(script);
+
+"""
 
 
 def readfile(fn):
@@ -136,6 +163,9 @@ def doReplacements(script,updateUrl,downloadUrl):
 
     script = script.replace('@@UPDATEURL@@', updateUrl)
     script = script.replace('@@DOWNLOADURL@@', downloadUrl)
+
+    script = script.replace('@@PLUGINSTART@@', pluginWrapperStart)
+    script = script.replace('@@PLUGINEND@@', pluginWrapperEnd)
 
     return script
 
@@ -232,7 +262,7 @@ if buildMobile:
     except:
         pass
     shutil.rmtree("mobile/assets/plugins")
-    shutil.copytree(os.path.join(outDir,"plugins"), "mobile/assets/plugins", ignore=shutil.ignore_patterns('*.meta.js', 'force-https*', 'privacy-view*'))
+    shutil.copytree(os.path.join(outDir,"plugins"), "mobile/assets/plugins", ignore=shutil.ignore_patterns('*.meta.js', 'force-https*', 'privacy-view*', 'speech-search*', 'basemap-cloudmade*'))
 
 
     if buildMobile != 'copyonly':

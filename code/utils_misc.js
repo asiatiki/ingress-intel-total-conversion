@@ -124,18 +124,34 @@ window.postAjax = function(action, data, success, error) {
   return result;
 }
 
-// converts unix timestamps to HH:mm:ss format if it was today;
+window.zeroPad = function(number,pad) {
+  number = number.toString();
+  var zeros = pad - number.length;
+  return Array(zeros>0?zeros+1:0).join("0") + number;
+}
+
+
+// converts javascript timestamps to HH:mm:ss format if it was today;
 // otherwise it returns YYYY-MM-DD
 window.unixTimeToString = function(time, full) {
   if(!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
   var time = d.toLocaleTimeString();
-  var date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  var date = d.getFullYear()+'-'+zeroPad(d.getMonth()+1,2)+'-'+zeroPad(d.getDate(),2);
   if(typeof full !== 'undefined' && full) return date + ' ' + time;
   if(d.toDateString() == new Date().toDateString())
     return time;
   else
     return date;
+}
+
+// converts a javascript time to a precise date and time (optionally with millisecond precision)
+// formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
+window.unixTimeToDateTimeString = function(time, millisecond) {
+  if(!time) return null;
+  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
+  return d.getFullYear()+'-'+zeroPad(d.getMonth()+1,2)+'-'+zeroPad(d.getDate(),2)
+    +' '+d.toLocaleTimeString()+(millisecond?'.'+zeroPad(d.getMilliseconds(),3):'');
 }
 
 window.unixTimeToHHmm = function(time) {
@@ -149,7 +165,7 @@ window.unixTimeToHHmm = function(time) {
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
     window.map.fitBounds(window.portalRangeIndicator.getBounds());
-  if(window.isSmartphone)
+  if(window.isSmartphone())
     window.smartphone.mapButton.click();
 }
 
@@ -233,14 +249,12 @@ window.getPortalDataZoom = function() {
 
   // limiting the mazimum zoom level for data retrieval reduces the number of requests at high zoom levels
   // (as all portal data is retrieved at z=17, why retrieve multiple z=18 tiles when fewer z=17 would do?)
-  // a potential downside - we end up requesting more data than we needed from the larger tiles that go off
-  // the window edge. 
+  // very effective along with the new cache code
   if (z > 17) z=17;
 
   // we could consider similar zoom-level consolidation, as, e.g. level 16 and 15 both return L1+, always
   // request zoom 15 tiles. however, there are quirks in the current data stream, where small fields aren't
   // returned by the server. using larger tiles always would amplify this issue.
-
 
   //sanity check - should never happen
   if (z < 0) z=0;
@@ -248,8 +262,7 @@ window.getPortalDataZoom = function() {
   return z;
 }
 
-window.getMinPortalLevel = function() {
-  var z = getPortalDataZoom();
+window.getMinPortalLevelForZoom = function(z) {
   if(z >= 17) return 0;
   if(z < 0) return 8;
   var conv = [8,8,8,8,7,7,6,6,5,4,4,3,3,2,2,1,1];
@@ -258,6 +271,12 @@ window.getMinPortalLevel = function() {
     ? minLevelByRenderLimit
     : conv[z];
   return result;
+}
+
+
+window.getMinPortalLevel = function() {
+  var z = getPortalDataZoom();
+  return getMinPortalLevelForZoom(z);
 }
 
 // returns number of pixels left to scroll down before reaching the
@@ -347,6 +366,14 @@ if (typeof String.prototype.startsWith !== 'function') {
 // (for strings passed as parameters to html onclick="..." for example)
 window.escapeJavascriptString = function(str) {
   return (str+'').replace(/[\\"']/g,'\\$&');
+}
+
+//escape special characters, such as tags
+window.escapeHtmlSpecialChars = function(str) {
+  var div = document.createElement(div);
+  var text = document.createTextNode(str);
+  div.appendChild(text);
+  return div.innerHTML;
 }
 
 window.prettyEnergy = function(nrg) {
@@ -445,8 +472,6 @@ window.addLayerGroup = function(name, layerGroup, defaultDisplay) {
   if(isLayerGroupDisplayed(name, defaultDisplay)) map.addLayer(layerGroup);
   layerChooser.addOverlay(layerGroup, name);
 }
-
-
 
 window.clampLat = function(lat) {
   if (lat > 90.0)

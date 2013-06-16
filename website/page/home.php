@@ -13,22 +13,19 @@ offers many more features. It is available for
 
 <h3>Latest news</h3>
 
-<h4>2nd May 2013</h4>
+<h4>12th June 2013</h4>
 <p>
-IITC version 0.11.3 has been released. This should vastly reduce the chance of getting REQUEST_FAILED errors
-while scrolling/zooming the map frequently. The passcode redemption code has been updated, and there are improvements
-to the URL link handling. The portals-list plugin has been updated, and bug fixes made to the
-player tracker. A new plugin to show portal levels as numbers has been added too.
-</p>
-<p>
-IITC Mobile 0.3.2 is also available. Along with the above, this includes a new option to show your current
-position on the map.
-</p>
-
-<h4>28th April 2013</h4>
-<p>
-New website launched! A major revamp of the website has been made. Thanks to the various users who contributed
-logos and site templates.
-</p>
+IITC version 0.12.1 released, and IITC Mobile 0.4.6. Changes include:
+<ul>
+<li>Display details about the new portal mods</li>
+<li>Updated Leaflet.js version - may reduce issues found on some Samsung devices running Android 4.1 (Jellybean)</li>
+<li>Fix resolving a large number of player names in one go</li>
+<li>Prevent refreshing old chat messages on small map movements - can vastly reduce repeated requests in some cases</li>
+<li>Various improvements/tweaks to the mobile version</li>
+<li>AP list plugin: fixed shield mitigation calculation</li>
+<li>New basemap plugins: OpenStreetMap, OpenCycleMap, Yandex (Russian), and a template for CloudMade.com to restore the original blue map</li>
+<li>Guess player level plugin: attempt to spot when a Jarvis Virus/ADA Refactor has been used and ignore that player's resonators when guessing the level</li>
+<li>Max links plugin: optimisations and dashed lines</li>
+</ul>
 
 <a class="btn btn-small" href="?page=news">Older news</a>

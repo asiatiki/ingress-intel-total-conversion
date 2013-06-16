@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ingress-intel-total-conversion@jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.12.0.@@DATETIMEVERSION@@
+// @version        0.12.2.@@DATETIMEVERSION@@
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
@@ -10,6 +10,7 @@
 // @include        https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
 
 
@@ -20,6 +21,7 @@ window.iitcBuildDate = '@@BUILDDATE@@';
 
 // disable vanilla JS
 window.onload = function() {};
+document.body.onload = function() {};
 
 
 // rescue user data from original page
@@ -112,12 +114,12 @@ function wrapper() {
 L_PREFER_CANVAS = false;
 
 // CONFIG OPTIONS ////////////////////////////////////////////////////
-window.REFRESH = 60; // refresh view every 60s (base time)
+window.REFRESH = 30; // refresh view every 30s (base time)
 window.ZOOM_LEVEL_ADJ = 5; // add 5 seconds per zoom level
 window.ON_MOVE_REFRESH = 1.25;  //refresh time to use after a movement event
 window.MINIMUM_OVERRIDE_REFRESH = 5; //limit on refresh time since previous refresh, limiting repeated move refresh rate
 window.REFRESH_GAME_SCORE = 15*60; // refresh game score every 15 minutes
-window.MAX_IDLE_TIME = 4; // stop updating map after 4min idling
+window.MAX_IDLE_TIME = 4*60; // stop updating map after 4min idling
 window.PRECACHE_PLAYER_NAMES_ZOOM = 17; // zoom level to start pre-resolving player names
 window.HIDDEN_SCROLLBAR_ASSUMED_WIDTH = 20;
 window.SIDEBAR_WIDTH = 300;
@@ -153,7 +155,7 @@ window.FIELD_MU_DISPLAY_AREA_ZOOM_RATIO = 0.001;
 window.FIELD_MU_DISPLAY_POINT_TOLERANCE = 60
 
 window.COLOR_SELECTED_PORTAL = '#f00';
-window.COLORS = ['#a0a0a0', '#0088FF', '#03DC03']; // none, res, enl
+window.COLORS = ['#FF9900', '#0088FF', '#03DC03']; // none, res, enl
 window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD2992', '#EB26CD', '#C124E0', '#9627F4'];
 window.COLORS_MOD = {VERY_RARE: '#F78AF6', RARE: '#AD8AFF', COMMON: '#84FBBD'};
 
@@ -198,6 +200,7 @@ window.MAX_XM_PER_LEVEL = [0, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
 window.MIN_AP_FOR_LEVEL = [0, 10000, 30000, 70000, 150000, 300000, 600000, 1200000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
+window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
 window.DESTROY_LINK = 187; //AP for destroying link
 window.DESTROY_FIELD = 750; //AP for destroying field

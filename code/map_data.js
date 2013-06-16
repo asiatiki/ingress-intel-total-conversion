@@ -5,6 +5,51 @@
 // action.
 
 
+// cache for data tiles. indexed by the query key (qk)
+window._requestCache = {}
+
+// cache entries older than the fresh age, and younger than the max age, are stale. they're used in the case of an error from the server
+window.REQUEST_CACHE_FRESH_AGE = 2*60;  // if younger than this, use data in the cache rather than fetching from the server
+window.REQUEST_CACHE_MAX_AGE = 15*60;  // maximum cache age. entries are deleted from the cache after this time
+
+window.storeDataCache = function(qk,data) {
+  var d = new Date();
+  window._requestCache[qk] = { time: d.getTime(), data: data };
+}
+
+window.getDataCache = function(qk) {
+  if (qk in window._requestCache) {
+    return window._requestCache[qk].data;
+  }
+  return undefined;
+}
+
+window.isDataCacheFresh = function(qk) {
+  if (qk in window._requestCache) {
+    var d = new Date();
+    var t = d.getTime()-REQUEST_CACHE_FRESH_AGE*1000;
+    if (window._requestCache[qk].time > t) {
+      return true;
+    }
+  }
+  return false;
+}
+
+window.expireDataCache = function() {
+  // TODO: add a limit on the maximum number of cache entries, and start expiring them sooner than the expiry time
+  // (might also make sense to approximate the size of cache entries, and have an overall size limit?)
+
+  var d = new Date();
+  var t = d.getTime()-window.REQUEST_CACHE_MAX_AGE*1000;
+
+  for(var qk in window._requestCache) {
+    if (window._requestCache[qk].time < t) {
+      delete window._requestCache[qk];
+    }
+  }
+}
+
+
 // requests map data for current viewport. For details on how this
 // works, refer to the description in “MAP DATA REQUEST CALCULATORS”
 window.requestData = function() {
@@ -12,10 +57,16 @@ window.requestData = function() {
   requests.abort();
   cleanUp();
 
+  expireDataCache();
+
+  //a limit on the number of map tiles to be pulled in a single request
+  var MAX_TILES_PER_BUCKET = 20;
+
   var bounds = clampLatLngBounds(map.getBounds());
 
   //we query the server as if the zoom level was this. it may not match the actual map zoom level
   var z = getPortalDataZoom();
+  console.log('requesting tiles at zoom '+z+' (L'+getMinPortalLevelForZoom(z)+'+ portals), map zoom is '+map.getZoom());
 
   var x1 = lngToTile(bounds.getWest(), z);
   var x2 = lngToTile(bounds.getEast(), z);
@@ -24,32 +75,57 @@ window.requestData = function() {
 
   // will group requests by second-last quad-key quadrant
   tiles = {};
+  fullBucketCount = 0;
+
+  var cachedData = { result: { map: {} } };
+  var requestTileCount = 0;
 
   // walk in x-direction, starts right goes left
   for (var x = x1; x <= x2; x++) {
     for (var y = y1; y <= y2; y++) {
       var tile_id = pointToTileId(z, x, y);
-      var bucket = Math.floor(x / 2) + "" + Math.floor(y / 2);
-      if (!tiles[bucket])
-        tiles[bucket] = [];
-      tiles[bucket].push(generateBoundsParams(
-        tile_id,
-        tileToLat(y + 1, z),
-        tileToLng(x, z),
-        tileToLat(y, z),
-        tileToLng(x + 1, z)
-      ));
+      if (isDataCacheFresh(tile_id)) {
+        cachedData.result.map[tile_id] = getDataCache(tile_id);
+      } else {
+        var bucket = (Math.floor(x/2) % 2) + ":" + (Math.floor(y/2) % 2);
+        if (!tiles[bucket]) {
+          //create empty bucket
+          tiles[bucket] = [];
+        }
+        else if(tiles[bucket].length >= MAX_TILES_PER_BUCKET) {
+          //too many items in bucket. rename it, and create a new empty one
+          tiles[bucket+'_'+fullBucketCount] = tiles[bucket];
+          fullBucketCount++;
+          tiles[bucket] = [];      
+        }
+
+        requestTileCount++;
+        tiles[bucket].push(generateBoundsParams(
+          tile_id,
+          tileToLat(y + 1, z),
+          tileToLng(x, z),
+          tileToLat(y, z),
+          tileToLng(x + 1, z)
+        ));
+      }
     }
   }
 
   // Reset previous result of Portal Render Limit handler
   portalRenderLimit.init();
-  // finally send ajax requests
+
+  // send ajax requests
+  console.log('requesting '+requestTileCount+' tiles in '+Object.keys(tiles).length+' requests');
   $.each(tiles, function(ind, tls) {
     data = { zoom: z };
     data.boundsParamsList = tls;
-    window.requests.add(window.postAjax('getThinnedEntitiesV2', data, window.handleDataResponse, window.handleFailedRequest));
+    window.requests.add(window.postAjax('getThinnedEntitiesV2', data, function(data, textStatus, jqXHR) { window.handleDataResponse(data,false); }, window.handleFailedRequest));
   });
+
+  // process the requests from the cache
+  console.log('got '+Object.keys(cachedData.result.map).length+' data tiles from cache');
+  handleDataResponse(cachedData, true);
+
 }
 
 // Handle failed map data request
@@ -62,7 +138,7 @@ window.handleFailedRequest = function() {
 }
 
 // works on map data response and ensures entities are drawn/updated.
-window.handleDataResponse = function(data, textStatus, jqXHR) {
+window.handleDataResponse = function(data, fromCache) {
   // remove from active ajax queries list
   if(!data || !data.result) {
     window.failedRequestCount++;
@@ -80,6 +156,24 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
   var ppp = {};
   var p2f = {};
   $.each(m, function(qk, val) {
+    var thisFromCache = fromCache;
+    if('error' in val) {
+      console.log('map data tile '+qk+' response error: '+val.error);
+
+      // try to use data in the cache, even if it's stale
+      val = getDataCache(qk);
+
+      if (!val) {
+        // no data in cache for this tile - skip it
+        return true; // $.each 'continue'
+      } else {
+        console.log('(using stale cache entry for map tile)');
+        thisFromCache = true;
+      }
+    }
+
+    if (!thisFromCache) storeDataCache(qk,val);
+
     $.each(val.deletedGameEntityGuids || [], function(ind, guid) {
       if(getTypeByGuid(guid) === TYPE_FIELD && window.fields[guid] !== undefined) {
         $.each(window.fields[guid].options.vertices, function(ind, vertex) {
@@ -132,10 +226,15 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
   });
 
   $.each(ppp, function(ind, portal) {
+
+    // when both source and destination portal are in the same response, no explicit 'edge' is returned
+    // instead, we need to reconstruct them from the data within the portal details
+
     if ('portalV2' in portal[2] && 'linkedEdges' in portal[2].portalV2) {
       $.each(portal[2].portalV2.linkedEdges, function (ind, edge) {
         if (!ppp[edge.otherPortalGuid])
           return;
+
         renderLink([
           edge.edgeGuid,
           portal[1],
@@ -146,11 +245,12 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
               "destinationPortalLocation": edge.isOrigin ? ppp[edge.otherPortalGuid][2].locationE6 : portal[2].locationE6,
               "originPortalGuid": !edge.isOrigin ? ppp[edge.otherPortalGuid][0] : portal[0],
               "originPortalLocation": !edge.isOrigin ? ppp[edge.otherPortalGuid][2].locationE6 : portal[2].locationE6
-            }
+            },
           }
         ]);
       });
     }
+
     if(portal[2].portalV2['linkedFields'] === undefined) {
       portal[2].portalV2['linkedFields'] = [];
     }
@@ -504,9 +604,17 @@ window.renderLink = function(ent) {
   if(Object.keys(links).length >= MAX_DRAWN_LINKS)
     return removeByGuid(ent[0]);
 
-  // assume that links never change. If they do, they will have a
-  // different ID.
-  if(findEntityInLeaflet(linksLayer, links, ent[0])) return;
+  // some links are constructed from portal linkedEdges data. These have no valid 'creator' data.
+  // replace with the more detailed data
+  // (we assume the other values - coordinates, etc - remain unchanged)
+  var found=findEntityInLeaflet(linksLayer, links, ent[0]);
+  if (found) {
+    if (!found.options.data.creator && ent[2].creator) {
+      //our existing data has no creator, but the new data does - update
+      found.options.data = ent[2];
+    }
+    return;
+  }
 
   var team = getTeam(ent[2]);
   var edge = ent[2].edge;

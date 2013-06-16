@@ -1,5 +1,36 @@
 <h2>News</h2>
 
+<h4>12th June 2013</h4>
+<p>
+IITC version 0.12.1 released, and IITC Mobile 0.4.6. Changes include:
+<ul>
+<li>Display details about the new portal mods</li>
+<li>Updated Leaflet.js version - may reduce issues found on some Samsung devices running Android 4.1 (Jellybean)</li>
+<li>Fix resolving a large number of player names in one go</li>
+<li>Prevent refreshing old chat messages on small map movements - can vastly reduce repeated requests in some cases</li>
+<li>Various improvements/tweaks to the mobile version</li>
+<li>AP list plugin: fixed shield mitigation calculation</li>
+<li>New basemap plugins: OpenStreetMap, OpenCycleMap, Yandex (Russian), and a template for CloudMade.com to restore the original blue map</li>
+<li>Guess player level plugin: attempt to spot when a Jarvis Virus/ADA Refactor has been used and ignore that player's resonators when guessing the level</li>
+<li>Max links plugin: optimisations and dashed lines</li>
+</ul>
+
+<h4>22nd May 2013</h4>
+<p>
+IITC version 0.12.0 has been released. This contains quite a few changes and new features, including
+<ul>
+<li>Portal highlighter system - and many portal highlighter plugins</li>
+<li>Dialogs - can be kept open and dragged while viewing the map</li>
+<li>Layers - the enabled layers are now remembered when you next load the intel site</li>
+<li>Improved request limits - more improvements have been made in this area</li>
+<li>Sync plugin - to sync data from the 'Keys' addon to multiple computers via Google Drive</li>
+<li>... and many other tweaks, bug fixes, etc</li>
+</ul>
+IITC Mobile 0.4.0 is also released. THis has also had major work. Along with the above, it includes a
+new in-app layer chooser and chat/map switcher, and authentication has been revamped to use the native
+Android authentication rather than entering your password.
+</p>
+
 <h4>2nd May 2013</h4>
 <p>
 IITC version 0.11.3 has been released. This should vastly reduce the chance of getting REQUEST_FAILED errors
