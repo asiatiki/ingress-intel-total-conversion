@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id          iitc-plugin-keys-import@dnc
 // @name        IITC plugin: Import keys
-// @version     0.0.120130520.045447
+// @version     0.0.120130617.1527
 // @namespace   https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL   none
 // @downloadURL none
-// @description [local-2013-05-20-045447] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
+// @description [local-2013-06-17-001527] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
 // @include     https://www.ingress.com/intel*
 // @include     http://www.ingress.com/intel*
 // @include     https://m-dot-betaspike.appspot.com/handshake*
@@ -58,10 +58,16 @@ window.plugin.importkeys.openDialog = function(event) {
     return;
   }
   var handshakeUrl = window.plugin.importkeys.APPSPOT_URL + '/handshake?json='
-    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-05-03T19:32:11Z 929c2cce62eb opt', 'deviceSoftwareVersion': '4.1.1'}));
+    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-06-07T16:49:41Z 63e36378f5e8 opt', 'deviceSoftwareVersion': '4.1.1'}));
   var div = document.createElement('div');
   var span = document.createElement('span');
-  span.appendChild(document.createTextNode('Log in below to import your Ingress inventory'));
+  span.appendChild(document.createTextNode('Log in below to import your Ingress inventory. (Or try again in a '));
+  var a = document.createElement('a');
+  a.appendChild(document.createTextNode('new window'));
+  a.setAttribute('href', handshakeUrl);
+  a.setAttribute('target', '_blank');
+  span.appendChild(a);
+  span.appendChild(document.createTextNode(')'));
   div.appendChild(span);
   var br = document.createElement('br');
   div.appendChild(br);
@@ -138,7 +144,7 @@ function inventoryCallback(event)
       }
       window.top.postMessage(json_out, window.targetDomain);
     } else {
-      alert('An error was received from the server\n' + event.target.statusText);
+      alert('An error was received from the server\n' + event.target.status + ' ' + event.target.statusText);
     }
   }
 }

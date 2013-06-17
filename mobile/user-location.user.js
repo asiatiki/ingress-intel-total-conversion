@@ -1,20 +1,22 @@
 // ==UserScript==
 // @id             iitc-plugin-user-location@cradle
 // @name           IITC plugin: User Location
-// @version        0.1.0.20130520.045447
+// @version        0.1.0.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] Show user location marker on map
+// @description    [mobile-2013-06-17-001535] Show user location marker on map
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
 // ==/UserScript==
 
+
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
 
 
 // PLUGIN START ////////////////////////////////////////////////////////
@@ -53,6 +55,7 @@ var setup = window.plugin.userLocation.setup;
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -66,4 +69,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
 

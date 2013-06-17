@@ -1,20 +1,24 @@
 // ==UserScript==
 // @id             iitc-plugin-guess-player-levels@breunigs
 // @name           IITC plugin: guess player level
-// @version        0.4.2.20130520.045447
+// @category       Info
+// @version        0.4.6.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] Tries to determine player levels from the data available in the current view
+// @description    [mobile-2013-06-17-001535] Tries to determine player levels from the data available in the current view
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
 
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
 
 
 // PLUGIN START ////////////////////////////////////////////////////////
@@ -72,12 +76,34 @@ window.plugin.guessPlayerLevels.setupChatNickHelper = function() {
 
 window.plugin.guessPlayerLevels.extractPortalData = function(data) {
   var r = data.portal.options.details.resonatorArray.resonators;
+
+  //due to the Jarvis Virus/ADA Refactor it's possible for a player to own resonators on a portal
+  //at a higher level than the player themselves. It is not possible to detect for sure when this
+  //has happened, but in many cases it will result in an impossible deployment arrangement
+  //(over 1 L8/7 res, over 2 L6/5 res, etc). if we detect this case, ignore all resonators owned
+  //by that player on the portal
+
+  var perPlayerResMaxLevel = {};
+  var perPlayerResMaxLevelCount = {};
+
   $.each(r, function(ind, reso) {
     if(!reso) return true;
-    var p = 'level-'+reso.ownerGuid;
-    var l = reso.level;
-    if(!window.localStorage[p] || window.localStorage[p] < l)
-      window.localStorage[p] = l;
+
+    if(!perPlayerResMaxLevel[reso.ownerGuid] || reso.level > perPlayerResMaxLevel[reso.ownerGuid]) {
+      perPlayerResMaxLevel[reso.ownerGuid] = reso.level;
+      perPlayerResMaxLevelCount[reso.ownerGuid] = 0;
+    }
+    if (reso.level == perPlayerResMaxLevel[reso.ownerGuid]) perPlayerResMaxLevelCount[reso.ownerGuid]++;
+  });
+
+  $.each(perPlayerResMaxLevel, function(guid, level) {
+    if (perPlayerResMaxLevelCount[guid] <= window.MAX_RESO_PER_PLAYER[level]) {
+      var p = 'level-'+guid;
+      if(!window.localStorage[p] || window.localStorage[p] < level)
+        window.localStorage[p] = level;
+    } else {
+      console.log('player guid '+guid+' has '+perPlayerResMaxLevelCount[guid]+' level '+level+' res on one portal - ignoring (ada refactor/jarvis virus)');
+    }
   });
 }
 
@@ -130,8 +156,30 @@ window.plugin.guessPlayerLevels.guess = function() {
   //console.log(s);
   dialog({
     text: s,
-    title: 'Player levels: R' + averageR.toFixed(2) + ', E' + averageE.toFixed(2)
+    title: 'Player levels: R' + averageR.toFixed(2) + ', E' + averageE.toFixed(2),
+    id: 'guess-player-levels',
+    width: 350,
+    buttons: {
+      'RESET GUESSES': function() {
+        // clear all guessed levels from local storage
+        $.each(Object.keys(localStorage), function(ind,key) {
+          if(key.lastIndexOf("level-",0)===0) {
+            localStorage.removeItem(key);
+          }
+        });
+        // now force all portals through the callback manually
+        $.each(window.portals, function(guid,p) {
+          window.plugin.guessPlayerLevels.extractPortalData({portal: p});
+        });
+        // and re-open the dialog (on a minimal timeout - so it's not closed while processing this callback)
+        setTimeout(window.plugin.guessPlayerLevels.guess,1);
+      },
+    },
+
   });
+
+  //run the name resolving process
+  resolvePlayerNames();
 }
 
 window.plugin.guessPlayerLevels.sort = function(playerHash) {
@@ -153,6 +201,7 @@ var setup =  function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -166,3 +215,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

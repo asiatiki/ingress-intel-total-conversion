@@ -1,31 +1,33 @@
 // ==UserScript==
 // @id             iitc-plugin-show-linked-portals@fstopienski
 // @name           IITC plugin: Show linked portals
-// @version        0.0.4.20130520.045447
+// @category       Portal Info
+// @version        0.0.4.20130617.1527
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-05-20-045447] Tries to show the linked portals (image, name and address) in portal detail view and jump to linked portal on click
+// @description    [local-2013-06-17-001527] Tries to show the linked portals (image, name and address) in portal detail view and jump to linked portal on click
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
+
+function wrapper() {
+// ensure plugin framework is there, even if iitc is not yet loaded
+if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+
+
+// PLUGIN START ////////////////////////////////////////////////////////
 
 /*
 * 0.0.1 initial release, show images, names and addresses of linked portal in portal detailview
 * - mouse click of the linked portal image selected the portal and adjust map
 * - click of "Linked Portal is out of range" zoom a step out
 */
-
-function wrapper() {
-// ensure plugin framework is there, even if iitc is not yet loaded
-if (typeof window.plugin !== 'function') {
-    window.plugin = function () {
-    };
-}
-
-// PLUGIN START ////////////////////////////////////////////////////////
 
 // use own namespace for plugin
 window.plugin.showLinkedPortal = function () {
@@ -119,16 +121,19 @@ var setup = function () {
 }
 // PLUGIN END //////////////////////////////////////////////////////////
 
-if (window.iitcLoaded && typeof setup === 'function') {
-    setup();
+
+if(window.iitcLoaded && typeof setup === 'function') {
+  setup();
 } else {
-    if (window.bootPlugins)
-        window.bootPlugins.push(setup);
-    else
-        window.bootPlugins = [setup];
+  if(window.bootPlugins)
+    window.bootPlugins.push(setup);
+  else
+    window.bootPlugins = [setup];
 }
 } // wrapper end
 // inject code into site context
 var script = document.createElement('script');
-script.appendChild(document.createTextNode('(' + wrapper + ')();'));
+script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

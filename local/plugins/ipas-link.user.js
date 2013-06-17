@@ -1,21 +1,25 @@
 // ==UserScript==
 // @id             iitc-plugin-ipas-link@graphracer
 // @name           IITC Plugin: simulate an attack on portal
-// @version        0.2.0.20130520.045447
+// @category       Portal Info
+// @version        0.2.0.20130617.1527
 // @namespace      https://github.com/xosofox/IPAS
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-05-20-045447] Adds a link to the portal details to open the portal in IPAS - Ingress Portal Attack Simulator on http://ipas.graphracer.com
+// @description    [local-2013-06-17-001527] Adds a link to the portal details to open the portal in IPAS - Ingress Portal Attack Simulator on http://ipas.graphracer.com
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
 
 
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+
 
 // PLUGIN START ////////////////////////////////////////////////////////
 
@@ -44,10 +48,18 @@ window.plugin.ipasLink.getHash = function (d) {
     hashParts = [];
     $.each(d.portalV2.linkedModArray, function (ind, mod) {
         //shields only, so far...
+        var modCodes={
+            c: "cs",
+            r: "rs",
+            v: "vrs"
+        };
+
         var s = "0";
         if (mod) {
             if (mod.type === "RES_SHIELD") {
                 s = mod.rarity.charAt(0).toLowerCase();
+                s=modCodes[s];
+                s = s + mod.stats.MITIGATION;
             }
         }
         hashParts.push(s);
@@ -66,6 +78,7 @@ var setup =  function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -79,3 +92,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

@@ -1,20 +1,24 @@
 // ==UserScript==
 // @id             iitc-plugin-highlight-portals-my-portals@vita10gy
 // @name           IITC plugin: highlight my portals
-// @version        0.1.0.20130520.045447
+// @category       Highlighter
+// @version        0.1.0.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] Uses the fill color of the portals to denote portals you have a hand in. Orange is just ownership. Yellow is sheilds. Red is Resonators. Red trumps both, yellow trumps orange.  
+// @description    [mobile-2013-06-17-001535] Uses the fill color of the portals to denote portals you have a hand in. Orange is just ownership. Yellow is sheilds. Red is Resonators. Red trumps both, yellow trumps orange.  
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
 
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
 
 
 // PLUGIN START ////////////////////////////////////////////////////////
@@ -72,6 +76,7 @@ var setup =  function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -85,3 +90,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

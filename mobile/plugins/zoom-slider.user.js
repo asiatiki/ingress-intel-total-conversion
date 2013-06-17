@@ -1,20 +1,24 @@
 // ==UserScript==
 // @id             iitc-plugin-zoom-slider@fragger
 // @name           IITC plugin: zoom slider
-// @version        0.1.1.20130520.045447
+// @category       Controls
+// @version        0.1.1.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] Shows a zoom slider on the map instead of the zoom buttons
+// @description    [mobile-2013-06-17-001535] Shows a zoom slider on the map instead of the zoom buttons
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
 
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
 
 
 // PLUGIN START ////////////////////////////////////////////////////////
@@ -253,6 +257,7 @@ var setup =  window.plugin.zoomSlider.setup;
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -266,3 +271,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

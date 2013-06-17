@@ -1,22 +1,24 @@
 // ==UserScript==
 // @id             iitc-plugin-privacy-view@Scrool
 // @name           IITC plugin: Privacy view on Intel
-// @version        1.0.0.20130520.045447
+// @version        1.0.0.20130617.1527
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @description    [local-2013-05-20-045447] From Intel hides info which shouldn't leak to players of other fraction
+// @description    [local-2013-06-17-001527] From Intel hides info which shouldn't leak to players of other fraction
 // @updateURL      none
 // @downloadURL    none
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
 
-function wrapper() {
 
+function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
-if(typeof window.plugin !== 'function')
-  window.plugin = function() {};
+if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+
 
 // PLUGIN START ////////////////////////////////////////////////////////
 
@@ -113,6 +115,7 @@ var setup = window.plugin.privacyView.setup;
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -121,10 +124,10 @@ if(window.iitcLoaded && typeof setup === 'function') {
   else
     window.bootPlugins = [setup];
 }
-
 } // wrapper end
-
 // inject code into site context
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

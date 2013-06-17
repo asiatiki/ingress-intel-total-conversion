@@ -1,20 +1,25 @@
 // ==UserScript==
 // @id             iitc-plugin-render-limit-increase@jonatkins
 // @name           IITC plugin: render limit increase
-// @version        0.3.0.20130520.045447
+// @category       Tweaks
+// @version        0.3.0.20130617.1527
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-05-20-045447] Increase the render limits, so less likely to be hit in higher density areas
+// @description    [local-2013-06-17-001527] Increase the render limits, so less likely to be hit in higher density areas
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
+
 
 function wrapper() {
 // ensure plugin framework is there, even if iitc is not yet loaded
 if(typeof window.plugin !== 'function') window.plugin = function() {};
+
 
 
 // PLUGIN START ////////////////////////////////////////////////////////
@@ -48,6 +53,7 @@ var setup =  window.plugin.renderLimitIncrease.setHigherLimits;
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -61,3 +67,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

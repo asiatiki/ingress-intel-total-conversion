@@ -25,7 +25,7 @@ function inventoryCallback(event)
       }
       window.top.postMessage(json_out, window.targetDomain);
     } else {
-      alert('An error was received from the server\n' + event.target.statusText);
+      alert('An error was received from the server\n' + event.target.status + ' ' + event.target.statusText);
     }
   }
 }

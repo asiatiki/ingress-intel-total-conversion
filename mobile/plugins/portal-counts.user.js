@@ -1,16 +1,27 @@
 // ==UserScript==
 // @id             iitc-plugin-portals-count@yenky
 // @name           IITC plugin: Show total counts of portals
-// @version        0.0.8.20130520.045447
+// @category       Info
+// @version        0.0.8.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] Display a list of all localized portals by level and faction
+// @description    [mobile-2013-06-17-001535] Display a list of all localized portals by level and faction
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
+
+function wrapper() {
+// ensure plugin framework is there, even if iitc is not yet loaded
+if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+
+
+// PLUGIN START ////////////////////////////////////////////////////////
 
 /* whatsnew
 * 0.0.8 : use dialog() instead of alert()
@@ -22,12 +33,6 @@
 * 0.0.1 : initial release, show count of portals
 * todo : 
 */ 
-
-function wrapper() {
-// ensure plugin framework is there, even if iitc is not yet loaded
-if(typeof window.plugin !== 'function') window.plugin = function() {};
-
-// PLUGIN START ////////////////////////////////////////////////////////
 
 // use own namespace for plugin
 window.plugin.portalcounts = function() {};
@@ -130,6 +135,7 @@ var setup =  function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -143,3 +149,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+

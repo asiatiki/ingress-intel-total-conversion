@@ -1,16 +1,26 @@
 // ==UserScript==
 // @id             iitc-plugin-players-resonators@rbino
 // @name           IITC plugin: Player's Resonators
-// @version        0.1.5.20130520.045447
+// @version        0.1.5.20130617.1535
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-05-20-045447] The plugins finds the resonators of a given player. The input is in the sidebar. Useful for revenge.
+// @description    [mobile-2013-06-17-001535] The plugins finds the resonators of a given player. The input is in the sidebar. Useful for revenge.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
+// @grant          none
 // ==/UserScript==
+
+
+function wrapper() {
+// ensure plugin framework is there, even if iitc is not yet loaded
+if(typeof window.plugin !== 'function') window.plugin = function() {};
+
+
+
+// PLUGIN START ////////////////////////////////////////////////////////
 
 /*********************************************************************************************************
 * Changelog:
@@ -22,13 +32,6 @@
 * 0.1.1 Added mouseover for portal location. Dirty hack to not show mousehover when the alert is fired.
 * 0.1.0 First public release
 *********************************************************************************************************/
-
-function wrapper() {
-// ensure plugin framework is there, even if iitc is not yet loaded
-if(typeof window.plugin !== 'function') window.plugin = function() {};
-
-
-// PLUGIN START ////////////////////////////////////////////////////////
 
 // use own namespace for plugin
 window.plugin.playersResonators = function() {};
@@ -106,6 +109,7 @@ var setup = function() {
 
 // PLUGIN END //////////////////////////////////////////////////////////
 
+
 if(window.iitcLoaded && typeof setup === 'function') {
   setup();
 } else {
@@ -119,3 +123,5 @@ if(window.iitcLoaded && typeof setup === 'function') {
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+ wrapper +')();'));
 (document.body || document.head || document.documentElement).appendChild(script);
+
+
