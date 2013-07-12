@@ -20,10 +20,8 @@ function inventoryCallback(event)
         }
       }
       var json_out = window.JSON.stringify({'keys':hash});
-      if (window.targetDomain == undefined) {
-        window.targetDomain = 'http://www.ingress.com/';
-      }
-      window.top.postMessage(json_out, window.targetDomain);
+      window.top.postMessage(json_out, 'http://www.ingress.com/');
+      window.top.postMessage(json_out, 'https://www.ingress.com/');
     } else {
       alert('An error was received from the server\n' + event.target.status + ' ' + event.target.statusText);
     }
