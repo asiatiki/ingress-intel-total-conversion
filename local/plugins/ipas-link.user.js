@@ -2,11 +2,11 @@
 // @id             iitc-plugin-ipas-link@graphracer
 // @name           IITC Plugin: simulate an attack on portal
 // @category       Portal Info
-// @version        0.2.0.20130617.1527
+// @version        0.2.0.20130712.50921
 // @namespace      https://github.com/xosofox/IPAS
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-06-17-001527] Adds a link to the portal details to open the portal in IPAS - Ingress Portal Attack Simulator on http://ipas.graphracer.com
+// @description    [local-2013-07-12-050921] Adds a link to the portal details to open the portal in IPAS - Ingress Portal Attack Simulator on http://ipas.graphracer.com
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -47,33 +47,68 @@ window.plugin.ipasLink.getHash = function (d) {
 
     hashParts = [];
     $.each(d.portalV2.linkedModArray, function (ind, mod) {
-        //shields only, so far...
-        var modCodes={
-            c: "cs",
-            r: "rs",
-            v: "vrs"
-        };
-
-        var s = "0";
-        if (mod) {
-            if (mod.type === "RES_SHIELD") {
-                s = mod.rarity.charAt(0).toLowerCase();
-                s=modCodes[s];
-                s = s + mod.stats.MITIGATION;
+        // s - shields
+        // h - heat sink
+        // i - intentionally left in
+        // t - turret
+        //
+        // f - force amp
+        // m - multi-hack
+        // l - link-amp
+        //
+            var modCodes = {
+                "RES_SHIELD": "s",
+                "HEATSINK": "h",
+                "TURRET": "t",
+                "FORCE_AMP": "f",
+                "MULTIHACK": "m",
+                "LINK_AMPLIFIER": "l"
             }
-        }
-        hashParts.push(s);
-    });
-    var shields = hashParts.join(",");
-    return resos + "|" + shields;
-}
+
+            var mc = "0";
+            if (mod) {
+                if (mod.type in modCodes) {
+                    mc = modCodes[mod.type] + mod.rarity.charAt(0).toLowerCase();
+
+                    //special for shields to distinguish old/new mitigation
+                    if (mod.type == "RES_SHIELD") {
+                        mc += mod.stats.MITIGATION;
+                    }
+                }
+            }
+            hashParts.push(mc);
+        });
+        var shields = hashParts.join(",");
+
+        var linkParts = [];
+        var edges = d.portalV2.linkedEdges;
+
+        var portalL = new L.LatLng(d.locationE6.latE6 / 1E6, d.locationE6.lngE6 / 1E6)
+        $.each(edges, function (ind, edge) {
+            //calc distance in m here
+            var distance = 1; //default to 1m, so a low level portal would support it
+
+            //Try to find other portals details
+            var guid = edge.otherPortalGuid
+            if (window.portals[guid] !== undefined) {
+                //get other portals details as o
+                var o = window.portals[guid].options.details;
+                var otherPortalL = new L.LatLng(o.locationE6.latE6 / 1E6, o.locationE6.lngE6 / 1E6);
+                var distance = Math.round(portalL.distanceTo(otherPortalL));
+            }
+
+            if (!(edge.isOrigin)) {
+                distance = distance * -1;
+            }
+            linkParts.push(distance);
+        });
+        var links = linkParts.join(",");
+
+        return resos + "/" + shields + "/" + links; //changed with IPAS 1.1 to / instead of |
+    }
 
 var setup = function () {
     window.plugin.ipasLink.setupCallback();
-}
-
-var setup =  function() {
-  window.plugin.ipasLink.setupCallback();
 }
 
 // PLUGIN END //////////////////////////////////////////////////////////

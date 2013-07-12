@@ -2,11 +2,11 @@
 // @id             iitc-plugin-sync@xelio
 // @name           IITC plugin: Sync
 // @category       Keys
-// @version        0.2.1.20130617.1535
+// @version        0.2.1.20130712.50923
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-06-17-001535] Sync data between clients via Google Realtime API. Only syncs data from specific plugins (currently: Keys). Sign in via the 'Sync' link.
+// @description    [mobile-2013-07-12-050923] Sync data between clients via Google Realtime API. Only syncs data from specific plugins (currently: Keys). Sign in via the 'Sync' link.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

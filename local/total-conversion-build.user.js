@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             ingress-intel-total-conversion@jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.12.2.20130617.1527
+// @version        0.12.3.20130712.50921
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-06-17-001527] Total conversion for the ingress intel map.
+// @description    [local-2013-07-12-050921] Total conversion for the ingress intel map.
 // @include        http://www.ingress.com/intel*
 // @include        https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
@@ -17,7 +17,7 @@
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if(document.getElementsByTagName('html')[0].getAttribute('itemscope') != null)
   throw('Ingress Intel Website is down, not a userscript issue.');
-window.iitcBuildDate = '2013-06-17-001527';
+window.iitcBuildDate = '2013-07-12-050921';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -60,7 +60,7 @@ for(var i = 0; i < d.length; i++) {
 // possible without requiring scripts.
 document.getElementsByTagName('head')[0].innerHTML = ''
   + '<title>Ingress Intel Map</title>'
-  + '<style>/* general rules ******************************************************/\n\nhtml, body, #map {\n  height: 100%;\n  width: 100%;\n  overflow: hidden; /* workaround for #373 */\n  background: #0e3d4e;\n}\n\nbody {\n  font-size: 14px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  margin: 0;\n}\n\n#scrollwrapper {\n  overflow-x: hidden;\n  overflow-y: auto;\n  position: fixed;\n  right: -38px;\n  top: 0;\n  width: 340px;\n  bottom: 45px;\n  z-index: 1001;\n  pointer-events: none;\n}\n\n#sidebar {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-left: 1px solid #20A8B1;\n  color: #888;\n  position: relative;\n  left: 0;\n  top: 0;\n  max-height: 100%;\n  overflow-y:scroll;\n  overflow-x:hidden;\n  z-index: 3000;\n  pointer-events: auto;\n}\n\n#sidebartoggle {\n  display: block;\n  padding: 20px 5px;\n  margin-top: -31px; /* -(toggle height / 2) */\n  line-height: 10px;\n  position: absolute;\n  top: 108px;\n  z-index: 3001;\n  background-color: rgba(8, 48, 78, 0.9);\n  color: #FFCE00;\n  border: 1px solid #20A8B1;\n  border-right: none;\n  border-radius: 5px 0 0 5px;\n  text-decoration: none;\n  right: -50px; /* overwritten later by the script with SIDEBAR_WIDTH */\n}\n\n.enl {\n  color: #03fe03 !important;\n}\n\n.res {\n  color: #00c5ff !important;\n}\n\n.none {\n  color: #fff;\n}\n\n.nickname {\n  cursor: pointer !important;\n}\n\na {\n  color: #ffce00;\n  cursor: pointer;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\n/* map display, required because GMaps uses a high z-index which is\n * normally above Leaflet’s vector pane */\n.leaflet-map-pane {\n  z-index: 1000;\n}\n\n/* leaflet layer chooser, when opened, is above other panels */\n/* doesn\'t actually work :( - left commented out for reference\n.leaflet-control-layers-expanded {\n  z-index: 9999 !important;\n}\n*/\n\n\n.leaflet-control-layers-overlays label.disabled {\n  text-decoration: line-through;\n  cursor: help;\n}\n\n\n/* base layer selection - first column */\n.leaflet-control-layers-base {\n  float: left;\n}\n\n/* overlays layer selection - 2nd column */\n.leaflet-control-layers-overlays {\n  float: left;\n  margin-left: 8px;\n  border-left: 1px solid #DDDDDD;\n  padding-left: 8px;\n}\n\n/* hide the usual seperator */\n.leaflet-control-layers-separator {\n  display: none;\n}\n\n\n\n.help {\n  cursor: help;\n}\n\n.toggle {\n  display: block;\n  height: 0;\n  width: 0;\n}\n\n/* field mu count */\n.fieldmu {\n  color: #FFCE00;\n  font-size: 13px;\n  font-family: "coda",arial,helvetica,sans-serif; /*override leaflet-container */\n  text-align: center;\n  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\n  pointer-events: none;\n}\n\n\n/* chat ***************************************************************/\n\n#chatcontrols {\n  color: #FFCE00;\n  background: rgba(8, 48, 78, 0.9);\n  position: absolute;\n  left: 0;\n  z-index: 3000;\n  height: 26px;\n  padding-left:1px;\n}\n\n#chatcontrols.expand {\n  top: 0;\n  bottom: auto;\n}\n\n#chatcontrols a {\n  margin-left: -1px;\n  display: inline-block;\n  width: 94px;\n  text-align: center;\n  height: 24px;\n  line-height: 24px;\n  border: 1px solid #20A8B1;\n  vertical-align: top;\n}\n\n#chatcontrols a:first-child {\n  letter-spacing:-1px;\n  text-decoration: none !important;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n\n#chatcontrols .toggle {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  margin: 6px auto auto;\n}\n\n#chatcontrols .expand {\n  border-bottom: 10px solid #FFCE00;\n}\n\n#chatcontrols .shrink {\n  border-top: 10px solid #FFCE00;\n}\n\n\n#chat {\n  position: absolute;\n  width: 708px;\n  bottom: 23px;\n  left: 0;\n  z-index: 3000;\n  background: rgba(8, 48, 78, 0.9);\n  font-size: 12.6px;\n  color: #eee;\n  border: 1px solid #20A8B1;\n  border-bottom: 0;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\nem {\n  color: red;\n  font-style: normal;\n}\n\n#chat.expand {\n  height:auto;\n  top: 25px;\n}\n\n#chatpublic, #chatfull, #chatcompact {\n  display: none;\n}\n\n#chat > div {\n  overflow-x:hidden;\n  overflow-y:scroll;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 2px;\n  position:relative;\n}\n\n#chat table, #chatinput table {\n  width: 100%;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#chatinput table {\n  height: 100%;\n}\n\n#chat td, #chatinput td {\n  font-family: Verdana, sans-serif;\n  font-size: 12.6px;\n  vertical-align: top;\n  padding-bottom: 3px;\n}\n\n/* time */\n#chat td:first-child, #chatinput td:first-child {\n  width: 44px;\n  overflow: hidden;\n  padding-left: 2px;\n  color: #bbb;\n  white-space: nowrap;\n}\n\n#chat time {\n  cursor: help;\n}\n\n/* nick */\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 91px;\n  overflow: hidden;\n  padding-left: 2px;\n  white-space: nowrap;\n}\n\n#chat td .system_narrowcast {\n  color: #f66 !important;\n}\n\nmark {\n  background: transparent;\n}\n\n.invisep {\n  display: inline-block;\n  width: 1px;\n  height: 1px;\n  overflow:hidden;\n  color: transparent;\n}\n\n/* divider */\nsummary {\n  color: #bbb;\n  display: inline-block;\n  font-family: Verdana,sans-serif;\n  height: 16px;\n  overflow: hidden;\n  padding: 0 2px;\n  white-space: nowrap;\n  width: 100%;\n}\n\n#chatinput {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  padding: 0 2px;\n  background: rgba(8, 48, 78, 0.9);\n  width: 708px;\n  border: 1px solid #20A8B1;\n  z-index: 3001;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chatinput td {\n  padding-bottom: 1px;\n  vertical-align: middle;\n}\n\n\n#chatinput input {\n  background: transparent;\n  font-size: 12.6px;\n  font-family: Verdana,sans-serif;\n  color: #EEEEEE;\n  width: 100%;\n  height: 100%;\n  padding:3px 4px 1px 4px;\n}\n\n\n\n/* sidebar ************************************************************/\n\n#sidebar > * {\n  border-bottom: 1px solid #20A8B1;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n\n#sidebartoggle .toggle {\n  border-bottom: 10px solid transparent;\n  border-top: 10px solid transparent;\n}\n\n#sidebartoggle .open {\n  border-right: 10px solid #FFCE00;\n}\n\n#sidebartoggle .close {\n  border-left: 10px solid #FFCE00;\n}\n\n/* player stats */\n#playerstat {\n  height: 30px;\n}\n\nh2 {\n  color: #ffce00;\n  font-size: 21px;\n  padding: 0 4px;\n  margin: 0;\n  cursor:help;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%;\n}\n\nh2 #name {\n  display: inline-block;\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 205px;\n  position: relative;\n}\n\nh2 #stats {\n  float: right;\n  height: 100%;\n  overflow: hidden;\n}\n\nh2 #signout {\n  font-size: 12px;\n  font-weight: normal;\n  line-height: 29px;\n  padding: 0 4px;\n  position: absolute;\n  top: 0;\n  right: 0;\n  background-color: rgba(8, 48, 78, 0.5);\n  display: none; /* starts hidden */\n}\n\nh2 sup, h2 sub {\n  display: block;\n  font-size: 11px;\n  margin-bottom: -2px;\n}\n\n\n/* gamestats */\n#gamestat {\n  height: 22px;\n}\n\n#gamestat span {\n  display: block;\n  float: left;\n  font-weight: bold;\n  cursor:help;\n  height: 21px;\n  line-height: 22px;\n}\n\n#gamestat .res {\n  background: #005684;\n  text-align: right;\n}\n\n#gamestat .enl {\n  background: #017f01;\n}\n\n\n/* geosearch input, and others */\ninput {\n  background-color: rgba(0, 0, 0, 0.3);\n  color: #ffce00;\n  height: 24px;\n  padding:0px 4px 0px 4px;\n  font-size: 12px;\n  border:0;\n  font-family:inherit;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#geosearch{\n  width:272px;\n  background-color: transparent;\n}\n#geosearchwrapper {\n  height:25px;  \n  background-color: rgba(0, 0, 0, 0.3);\n}\n#geosearchwrapper img{\n  vertical-align: bottom;\n  margin-bottom: 2px;\n  cursor: pointer;\n}\n::-webkit-input-placeholder {\n  font-style: italic;\n}\n\n:-moz-placeholder {\n  font-style: italic;\n}\n\n::-moz-placeholder {\n  font-style: italic;\n}\n\n.leaflet-control-layers input {\n  height: auto;\n  padding: 0;\n}\n\n\n/* portal title and image */\nh3 {\n  font-size: 16px;\n  padding: 0 4px;\n  margin:0;\n  height: 23px;\n  width: 100%;\n  overflow:hidden;\n  text-overflow: "~";\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n.imgpreview {\n  height: 190px;\n  background: no-repeat center center;\n  background-size: contain;\n  cursor: help;\n  overflow: hidden;\n}\n\n.imgpreview img.hide {\n  display: none;\n}\n\n#level {\n  font-size: 40px;\n  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\n  display: block;\n  margin-right: 15px;\n  text-align:right;\n}\n\n/* portal mods */\n.mods {\n  margin: 3px auto 1px auto;\n  width: 296px;\n  height: 67px;\n  text-align: center;\n}\n\n.mods span {\n  background-color: rgba(0, 0, 0, 0.3);\n  /* can’t use inline-block because Webkit\'s implementation is buggy and\n   * introduces additional margins in random cases. No clear necessary,\n   * as that’s solved by setting height on .mods. */\n  display: block;\n  float:left;\n  height: 63px;\n  margin: 0 2px;\n  overflow: hidden;\n  padding: 2px;\n  text-align: center;\n  width: 63px;\n  cursor:help;\n  border: 1px solid #666;\n}\n\n.mods span:not([title]) {\n  cursor: auto;\n}\n\n.res .mods span, .res .meter {\n  border: 1px solid #0076b6;\n}\n.enl .mods span, .enl .meter {\n  border: 1px solid #017f01;\n}\n\n/* random details, resonator details */\n#randdetails, #resodetails {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 0 4px;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#randdetails td, #resodetails td {\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 50%;\n  width: calc(50% - 62px);\n}\n\n#randdetails th, #resodetails th {\n  font-weight: normal;\n  text-align: right;\n  width: 62px;\n  padding:0px;\n  padding-right:4px;\n  padding-left:4px;\n}\n\n#randdetails th + th, #resodetails th + th {\n  text-align: left;\n  padding-right: 4px;\n  padding-left: 4px;\n}\n\n#randdetails td:first-child, #resodetails td:first-child {\n  text-align: right;\n  padding-left: 2px;\n}\n\n#randdetails td:last-child, #resodetails td:last-child {\n  text-align: left;\n  padding-right: 2px;\n}\n\n\n#randdetails {\n  margin-top: 4px;\n  margin-bottom: 5px;\n}\n\n\n#randdetails tt {\n  font-family: inherit;\n  cursor: help;\n}\n\n/* resonators */\n#resodetails {\n  margin-bottom: 0px;\n}\n\n.meter {\n  background: #000;\n  cursor: help;\n  display: inline-block;\n  height: 18px;\n  padding: 1px;\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  left: 0;\n  top: 0;\n}\n\n.meter span {\n  display: block;\n  height: 14px;\n}\n\n.meter-level {\n  position: absolute;\n  top: -2px;\n  left: 50%;\n  margin-left: -6px;\n  text-shadow: 0.0em 0.0em 0.3em #808080;\n}\n\n/* links below resos */\n\n.linkdetails {\n  margin-bottom: 0px;\n  text-align: center;\n}\n\n.linkdetails aside {\n  display: inline-block;\n  white-space: nowrap;\n  font-size: 12px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n\n\n\n#toolbox {\n  font-size: 12px;\n  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\n}\n\n#toolbox > a {\n  margin-left: 5px;\n  margin-right: 5px;\n  white-space: nowrap;\n}\n\n/* a common portal display takes this much space (prevents moving\n * content when first selecting a portal) */\n\n#portaldetails {\n  min-height: 63px;\n  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\n}\n\n#portaldetails .close {\n  position: absolute;\n  top: -2px;\n  right: 2px;\n  cursor: pointer;\n  color: #FFCE00;\n  font-family: "Arial", sans;\n  font-size: 16px;\n}\n\n/* update status */\n#updatestatus {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-bottom: 0;\n  border-top: 1px solid #20A8B1;\n  border-left: 1px solid #20A8B1;\n  bottom: 0;\n  color: #ffce00;\n  font-size:13px;\n  padding: 4px;\n  position: fixed;\n  right: 0;\n  z-index: 3002;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#updatestatus .map {\n  margin-left: 8px;\n}\n\n/* Dialogs\n */\n.ui-tooltip, .ui-dialog {\n  position: absolute;\n  z-index: 9999;\n  background-color: rgba(8, 48, 78, 0.9);\n  border: 1px solid #20A8B1;\n  color: #eee;\n  font: 13px/15px Roboto, Arial, Helvetica, sans-serif;\n  padding: 2px 4px;\n}\n\n.ui-tooltip {\n  max-width: 300px;\n}\n\n.ui-widget-overlay {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 10000;\n  background:  #444;\n  opacity: 0.6;\n}\n\n.ui-modal {\n  z-index: 10001 !important;\n}\n\n.ui-tooltip {\n  z-index: 10002 !important;\n}\n\n.ui-tooltip, .ui-dialog a {\n  color: #FFCE00;\n}\n\n.ui-dialog {\n  padding: 0;\n  border-radius: 2px;\n}\n\n.ui-dialog-modal .ui-dialog-titlebar-close {\n  display: none;\n}\n\n.ui-dialog-titlebar {\n  text-align: center;\n  padding: 4px;\n  background-color: rgba(8, 60, 78, 0.9);\n  min-width: 250px;\n}\n\n.ui-dialog-title {\n  padding: 2px;\n  font-weight: bold;\n}\n\n.ui-dialog-title-active {\n  color: #ffce00;\n}\n\n.ui-dialog-title-inactive {\n  color: #ffffff;\n}\n\n.ui-dialog-titlebar-button {\n  position: absolute;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n  width: 17px;\n  height: 17px;\n  top: 3px;\n  cursor: pointer;\n  border: 1px solid rgb(32, 168, 177);\n  background-color: rgba(0, 0, 0, 0);\n}\n\n.ui-dialog-titlebar-button:active {\n  background-color: rgb(32, 168, 177);\n}\n\n.ui-dialog-titlebar-button-close {\n  right: 4px;\n}\n\n.ui-dialog-titlebar-button-collapse {\n  right: 25px;\n}\n\n.ui-dialog-titlebar-button-collapse-expanded {\n  /* For future changes */\n}\n\n.ui-dialog-titlebar-button-collapse-collapsed {\n   background-color: rgb(32, 168, 177);\n}\n\n.ui-dialog-content {\n  padding: 12px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  max-height: 600px !important;\n  max-width: 700px !important;\n  position: relative;\n}\n\n.ui-dialog-content-hidden {\n  display: none !important;\n}\n\n.ui-dialog-buttonpane {\n  padding: 6px;\n  border-top: 1px solid #20A8B1;\n}\n\n.ui-dialog-buttonset {\n  text-align: right;\n}\n\n.ui-dialog-buttonset button,\n.ui-dialog-content button {\n  padding: 2px;\n  min-width: 40px;\n  color: #FFCE00;\n  border: 1px solid #FFCE00;\n  background-color: rgba(8, 48, 78, 0.9);\n}\n\n.ui-dialog-buttonset button:hover {\n  text-decoration: underline;\n}\n\n.ui-dialog-aboutIITC {\n  width: auto !important;\n  min-width: 400px !important;\n  max-width: 600px !important;\n}\n\ntd {\n  padding: 0;\n  vertical-align: top;\n}\n\ntd + td {\n  padding-left: 4px;\n}\n\n#qrcode > canvas {\n  border: 8px solid white;\n}\n\n/* redeem results *****************************************************/\n.redeem-result-table {\n  font-size: 14px;\n  font-family: Roboto, Arial, Helvetica, sans-serif;\n  table-layout: fixed;\n}\n\n.redeem-result tr > td:first-child {\n  width: 50px;\n  text-align: right;\n}\n\n.redeem-result-html {\n  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\n}\n\n.pl_nudge_date {\n  background-color: #724510;\n  border-left: 1px solid #ffd652;\n  border-bottom: 1px solid #ffd652;\n  border-top: 1px solid #ffd652;\n  color: #ffd652;\n  display: inline-block;\n  float: left;\n  font-size: 12px;\n  height: 18px;\n  text-align: center;\n}\n\n.pl_nudge_pointy_spacer {\n  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\n  display: inline-block;\n  float: left;\n  height: 20px;\n  left: 47px;\n  width: 5px;\n}\n\n.pl_nudge_player {\n  cursor: pointer;\n}\n\n.pl_nudge_me {\n  color: #ffd652;\n}\n\n.RESISTANCE {\n  color: #00c2ff;\n}\n\n.ALIENS {\n  color: #28f428;\n}\n\n#portal_highlight_select{\n  position: absolute;\n  top:5px;\n  left:10px;\n  z-index: 2500;\n  font-size:11px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  background-color:#0E3C46;\n  color:#ffce00;\n  \n}\n\n\n</style>'
+  + '<style>/* general rules ******************************************************/\n\nhtml, body, #map {\n  height: 100%;\n  width: 100%;\n  overflow: hidden; /* workaround for #373 */\n  background: #0e3d4e;\n}\n\nbody {\n  font-size: 14px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  margin: 0;\n}\n\n#scrollwrapper {\n  overflow-x: hidden;\n  overflow-y: auto;\n  position: fixed;\n  right: -38px;\n  top: 0;\n  width: 340px;\n  bottom: 45px;\n  z-index: 1001;\n  pointer-events: none;\n}\n\n#sidebar {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-left: 1px solid #20A8B1;\n  color: #888;\n  position: relative;\n  left: 0;\n  top: 0;\n  max-height: 100%;\n  overflow-y:scroll;\n  overflow-x:hidden;\n  z-index: 3000;\n  pointer-events: auto;\n}\n\n#sidebartoggle {\n  display: block;\n  padding: 20px 5px;\n  margin-top: -31px; /* -(toggle height / 2) */\n  line-height: 10px;\n  position: absolute;\n  top: 108px;\n  z-index: 3001;\n  background-color: rgba(8, 48, 78, 0.9);\n  color: #FFCE00;\n  border: 1px solid #20A8B1;\n  border-right: none;\n  border-radius: 5px 0 0 5px;\n  text-decoration: none;\n  right: -50px; /* overwritten later by the script with SIDEBAR_WIDTH */\n}\n\n.enl {\n  color: #03fe03 !important;\n}\n\n.res {\n  color: #00c5ff !important;\n}\n\n.none {\n  color: #fff;\n}\n\n.nickname {\n  cursor: pointer !important;\n}\n\na {\n  color: #ffce00;\n  cursor: pointer;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\n/* map display, required because GMaps uses a high z-index which is\n * normally above Leaflet’s vector pane */\n.leaflet-map-pane {\n  z-index: 1000;\n}\n\n/* leaflet layer chooser, when opened, is above other panels */\n/* doesn\'t actually work :( - left commented out for reference\n.leaflet-control-layers-expanded {\n  z-index: 9999 !important;\n}\n*/\n\n\n.leaflet-control-layers-overlays label.disabled {\n  text-decoration: line-through;\n  cursor: help;\n}\n\n\n/* base layer selection - first column */\n.leaflet-control-layers-base {\n  float: left;\n}\n\n/* overlays layer selection - 2nd column */\n.leaflet-control-layers-overlays {\n  float: left;\n  margin-left: 8px;\n  border-left: 1px solid #DDDDDD;\n  padding-left: 8px;\n}\n\n/* hide the usual seperator */\n.leaflet-control-layers-separator {\n  display: none;\n}\n\n\n\n.help {\n  cursor: help;\n}\n\n.toggle {\n  display: block;\n  height: 0;\n  width: 0;\n}\n\n/* field mu count */\n.fieldmu {\n  color: #FFCE00;\n  font-size: 13px;\n  font-family: "coda",arial,helvetica,sans-serif; /*override leaflet-container */\n  text-align: center;\n  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\n  pointer-events: none;\n}\n\n\n/* chat ***************************************************************/\n\n#chatcontrols {\n  color: #FFCE00;\n  background: rgba(8, 48, 78, 0.9);\n  position: absolute;\n  left: 0;\n  z-index: 3000;\n  height: 26px;\n  padding-left:1px;\n}\n\n#chatcontrols.expand {\n  top: 0;\n  bottom: auto;\n}\n\n#chatcontrols a {\n  margin-left: -1px;\n  display: inline-block;\n  width: 94px;\n  text-align: center;\n  height: 24px;\n  line-height: 24px;\n  border: 1px solid #20A8B1;\n  vertical-align: top;\n}\n\n#chatcontrols a:first-child {\n  letter-spacing:-1px;\n  text-decoration: none !important;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n\n#chatcontrols .toggle {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  margin: 6px auto auto;\n}\n\n#chatcontrols .expand {\n  border-bottom: 10px solid #FFCE00;\n}\n\n#chatcontrols .shrink {\n  border-top: 10px solid #FFCE00;\n}\n\n\n#chat {\n  position: absolute;\n  width: 708px;\n  bottom: 23px;\n  left: 0;\n  z-index: 3000;\n  background: rgba(8, 48, 78, 0.9);\n  font-size: 12.6px;\n  color: #eee;\n  border: 1px solid #20A8B1;\n  border-bottom: 0;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\nem {\n  color: red;\n  font-style: normal;\n}\n\n#chat.expand {\n  height:auto;\n  top: 25px;\n}\n\n#chatpublic, #chatfull, #chatcompact {\n  display: none;\n}\n\n#chat > div {\n  overflow-x:hidden;\n  overflow-y:scroll;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 2px;\n  position:relative;\n}\n\n#chat table, #chatinput table {\n  width: 100%;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#chatinput table {\n  height: 100%;\n}\n\n#chat td, #chatinput td {\n  font-family: Verdana, sans-serif;\n  font-size: 12.6px;\n  vertical-align: top;\n  padding-bottom: 3px;\n}\n\n/* time */\n#chat td:first-child, #chatinput td:first-child {\n  width: 44px;\n  overflow: hidden;\n  padding-left: 2px;\n  color: #bbb;\n  white-space: nowrap;\n}\n\n#chat time {\n  cursor: help;\n}\n\n/* nick */\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 91px;\n  overflow: hidden;\n  padding-left: 2px;\n  white-space: nowrap;\n}\n\n#chat td .system_narrowcast {\n  color: #f66 !important;\n}\n\nmark {\n  background: transparent;\n}\n\n.invisep {\n  display: inline-block;\n  width: 1px;\n  height: 1px;\n  overflow:hidden;\n  color: transparent;\n}\n\n/* divider */\nsummary {\n  color: #bbb;\n  display: inline-block;\n  font-family: Verdana,sans-serif;\n  height: 16px;\n  overflow: hidden;\n  padding: 0 2px;\n  white-space: nowrap;\n  width: 100%;\n}\n\n#chatinput {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  padding: 0 2px;\n  background: rgba(8, 48, 78, 0.9);\n  width: 708px;\n  border: 1px solid #20A8B1;\n  z-index: 3001;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chatinput td {\n  padding-bottom: 1px;\n  vertical-align: middle;\n}\n\n\n#chatinput input {\n  background: transparent;\n  font-size: 12.6px;\n  font-family: Verdana,sans-serif;\n  color: #EEEEEE;\n  width: 100%;\n  height: 100%;\n  padding:3px 4px 1px 4px;\n}\n\n\n\n/* sidebar ************************************************************/\n\n#sidebar > * {\n  border-bottom: 1px solid #20A8B1;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n\n#sidebartoggle .toggle {\n  border-bottom: 10px solid transparent;\n  border-top: 10px solid transparent;\n}\n\n#sidebartoggle .open {\n  border-right: 10px solid #FFCE00;\n}\n\n#sidebartoggle .close {\n  border-left: 10px solid #FFCE00;\n}\n\n/* player stats */\n#playerstat {\n  height: 30px;\n}\n\nh2 {\n  color: #ffce00;\n  font-size: 21px;\n  padding: 0 4px;\n  margin: 0;\n  cursor:help;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%;\n}\n\nh2 #name {\n  display: inline-block;\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 205px;\n  position: relative;\n}\n\nh2 #stats {\n  float: right;\n  height: 100%;\n  overflow: hidden;\n}\n\nh2 #signout {\n  font-size: 12px;\n  font-weight: normal;\n  line-height: 29px;\n  padding: 0 4px;\n  position: absolute;\n  top: 0;\n  right: 0;\n  background-color: rgba(8, 48, 78, 0.5);\n  display: none; /* starts hidden */\n}\n\nh2 sup, h2 sub {\n  display: block;\n  font-size: 11px;\n  margin-bottom: -2px;\n}\n\n\n/* gamestats */\n#gamestat {\n  height: 22px;\n}\n\n#gamestat span {\n  display: block;\n  float: left;\n  font-weight: bold;\n  cursor:help;\n  height: 21px;\n  line-height: 22px;\n}\n\n#gamestat .res {\n  background: #005684;\n  text-align: right;\n}\n\n#gamestat .enl {\n  background: #017f01;\n}\n\n\n/* geosearch input, and others */\ninput {\n  background-color: rgba(0, 0, 0, 0.3);\n  color: #ffce00;\n  height: 24px;\n  padding:0px 4px 0px 4px;\n  font-size: 12px;\n  border:0;\n  font-family:inherit;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#geosearch{\n  width:272px;\n  background-color: transparent;\n}\n#geosearchwrapper {\n  height:25px;  \n  background-color: rgba(0, 0, 0, 0.3);\n}\n#geosearchwrapper img{\n  vertical-align: bottom;\n  margin-bottom: 2px;\n  cursor: pointer;\n}\n::-webkit-input-placeholder {\n  font-style: italic;\n}\n\n:-moz-placeholder {\n  font-style: italic;\n}\n\n::-moz-placeholder {\n  font-style: italic;\n}\n\n.leaflet-control-layers input {\n  height: auto;\n  padding: 0;\n}\n\n\n/* portal title and image */\nh3 {\n  font-size: 16px;\n  padding: 0 4px;\n  margin:0;\n  height: 23px;\n  width: 100%;\n  overflow:hidden;\n  text-overflow: "~";\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n.imgpreview {\n  height: 190px;\n  background: no-repeat center center;\n  background-size: contain;\n  cursor: help;\n  overflow: hidden;\n}\n\n.imgpreview img.hide {\n  display: none;\n}\n\n.imgpreview .portalDetails {\n  display: none;\n}\n\n#level {\n  font-size: 40px;\n  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\n  display: block;\n  margin-right: 15px;\n  text-align:right;\n}\n\n/* portal mods */\n.mods {\n  margin: 3px auto 1px auto;\n  width: 296px;\n  height: 67px;\n  text-align: center;\n}\n\n.mods span {\n  background-color: rgba(0, 0, 0, 0.3);\n  /* can’t use inline-block because Webkit\'s implementation is buggy and\n   * introduces additional margins in random cases. No clear necessary,\n   * as that’s solved by setting height on .mods. */\n  display: block;\n  float:left;\n  height: 63px;\n  margin: 0 2px;\n  overflow: hidden;\n  padding: 2px;\n  text-align: center;\n  width: 63px;\n  cursor:help;\n  border: 1px solid #666;\n}\n\n.mods span:not([title]) {\n  cursor: auto;\n}\n\n.res .mods span, .res .meter {\n  border: 1px solid #0076b6;\n}\n.enl .mods span, .enl .meter {\n  border: 1px solid #017f01;\n}\n\n/* random details, resonator details */\n#randdetails, #resodetails {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 0 4px;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#randdetails td, #resodetails td {\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 50%;\n  width: calc(50% - 62px);\n}\n\n#randdetails th, #resodetails th {\n  font-weight: normal;\n  text-align: right;\n  width: 62px;\n  padding:0px;\n  padding-right:4px;\n  padding-left:4px;\n}\n\n#randdetails th + th, #resodetails th + th {\n  text-align: left;\n  padding-right: 4px;\n  padding-left: 4px;\n}\n\n#randdetails td:first-child, #resodetails td:first-child {\n  text-align: right;\n  padding-left: 2px;\n}\n\n#randdetails td:last-child, #resodetails td:last-child {\n  text-align: left;\n  padding-right: 2px;\n}\n\n\n#randdetails {\n  margin-top: 4px;\n  margin-bottom: 5px;\n}\n\n\n#randdetails tt {\n  font-family: inherit;\n  cursor: help;\n}\n\n/* resonators */\n#resodetails {\n  margin-bottom: 0px;\n}\n\n.meter {\n  background: #000;\n  cursor: help;\n  display: inline-block;\n  height: 18px;\n  padding: 1px;\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  left: 0;\n  top: 0;\n}\n\n.meter span {\n  display: block;\n  height: 14px;\n}\n\n.meter-level {\n  position: absolute;\n  top: -2px;\n  left: 50%;\n  margin-left: -6px;\n  text-shadow: 0.0em 0.0em 0.3em #808080;\n}\n\n/* links below resos */\n\n.linkdetails {\n  margin-bottom: 0px;\n  text-align: center;\n}\n\n.linkdetails aside {\n  display: inline-block;\n  white-space: nowrap;\n  font-size: 12px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n\n\n\n#toolbox {\n  font-size: 12px;\n  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\n}\n\n#toolbox > a {\n  margin-left: 5px;\n  margin-right: 5px;\n  white-space: nowrap;\n}\n\n/* a common portal display takes this much space (prevents moving\n * content when first selecting a portal) */\n\n#portaldetails {\n  min-height: 63px;\n  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\n}\n\n#portaldetails .close {\n  position: absolute;\n  top: -2px;\n  right: 2px;\n  cursor: pointer;\n  color: #FFCE00;\n  font-family: "Arial", sans;\n  font-size: 16px;\n}\n\n/* update status */\n#updatestatus {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-bottom: 0;\n  border-top: 1px solid #20A8B1;\n  border-left: 1px solid #20A8B1;\n  bottom: 0;\n  color: #ffce00;\n  font-size:13px;\n  padding: 4px;\n  position: fixed;\n  right: 0;\n  z-index: 3002;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#updatestatus .map {\n  margin-left: 8px;\n}\n\n/* Dialogs\n */\n.ui-tooltip, .ui-dialog {\n  position: absolute;\n  z-index: 9999;\n  background-color: rgba(8, 48, 78, 0.9);\n  border: 1px solid #20A8B1;\n  color: #eee;\n  font: 13px/15px Roboto, Arial, Helvetica, sans-serif;\n  padding: 2px 4px;\n}\n\n.ui-tooltip {\n  max-width: 300px;\n}\n\n.ui-widget-overlay {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 10000;\n  background:  #444;\n  opacity: 0.6;\n}\n\n.ui-modal {\n  z-index: 10001 !important;\n}\n\n.ui-tooltip {\n  z-index: 10002 !important;\n}\n\n.ui-tooltip, .ui-dialog a {\n  color: #FFCE00;\n}\n\n.ui-dialog {\n  padding: 0;\n  border-radius: 2px;\n}\n\n.ui-dialog-modal .ui-dialog-titlebar-close {\n  display: none;\n}\n\n.ui-dialog-titlebar {\n  text-align: center;\n  padding: 4px;\n  background-color: rgba(8, 60, 78, 0.9);\n  min-width: 250px;\n}\n\n.ui-dialog-title {\n  padding: 2px;\n  font-weight: bold;\n}\n\n.ui-dialog-title-active {\n  color: #ffce00;\n}\n\n.ui-dialog-title-inactive {\n  color: #ffffff;\n}\n\n.ui-dialog-titlebar-button {\n  position: absolute;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n  width: 17px;\n  height: 17px;\n  top: 3px;\n  cursor: pointer;\n  border: 1px solid rgb(32, 168, 177);\n  background-color: rgba(0, 0, 0, 0);\n}\n\n.ui-dialog-titlebar-button:active {\n  background-color: rgb(32, 168, 177);\n}\n\n.ui-dialog-titlebar-button-close {\n  right: 4px;\n}\n\n.ui-dialog-titlebar-button-collapse {\n  right: 25px;\n}\n\n.ui-dialog-titlebar-button-collapse-expanded {\n  /* For future changes */\n}\n\n.ui-dialog-titlebar-button-collapse-collapsed {\n   background-color: rgb(32, 168, 177);\n}\n\n.ui-dialog-content {\n  padding: 12px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  max-height: 600px !important;\n  max-width: 700px !important;\n  position: relative;\n}\n\n.ui-dialog-content-hidden {\n  display: none !important;\n}\n\n.ui-dialog-buttonpane {\n  padding: 6px;\n  border-top: 1px solid #20A8B1;\n}\n\n.ui-dialog-buttonset {\n  text-align: right;\n}\n\n.ui-dialog-buttonset button,\n.ui-dialog-content button {\n  padding: 2px;\n  min-width: 40px;\n  color: #FFCE00;\n  border: 1px solid #FFCE00;\n  background-color: rgba(8, 48, 78, 0.9);\n}\n\n.ui-dialog-buttonset button:hover {\n  text-decoration: underline;\n}\n\n.ui-dialog-aboutIITC {\n  width: auto !important;\n  min-width: 400px !important;\n  max-width: 600px !important;\n}\n\ntd {\n  padding: 0;\n  vertical-align: top;\n}\n\ntd + td {\n  padding-left: 4px;\n}\n\n#qrcode > canvas {\n  border: 8px solid white;\n}\n\n/* redeem results *****************************************************/\n.redeem-result-table {\n  font-size: 14px;\n  font-family: Roboto, Arial, Helvetica, sans-serif;\n  table-layout: fixed;\n}\n\n.redeem-result tr > td:first-child {\n  width: 50px;\n  text-align: right;\n}\n\n.redeem-result-html {\n  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\n}\n\n.pl_nudge_date {\n  background-color: #724510;\n  border-left: 1px solid #ffd652;\n  border-bottom: 1px solid #ffd652;\n  border-top: 1px solid #ffd652;\n  color: #ffd652;\n  display: inline-block;\n  float: left;\n  font-size: 12px;\n  height: 18px;\n  text-align: center;\n}\n\n.pl_nudge_pointy_spacer {\n  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\n  display: inline-block;\n  float: left;\n  height: 20px;\n  left: 47px;\n  width: 5px;\n}\n\n.pl_nudge_player {\n  cursor: pointer;\n}\n\n.pl_nudge_me {\n  color: #ffd652;\n}\n\n.RESISTANCE {\n  color: #00c2ff;\n}\n\n.ALIENS {\n  color: #28f428;\n}\n\n#portal_highlight_select{\n  position: absolute;\n  top:5px;\n  left:10px;\n  z-index: 2500;\n  font-size:11px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  background-color:#0E3C46;\n  color:#ffce00;\n  \n}\n\n\n\n.portal_details th, .portal_details td {\n  vertical-align: top;\n  text-align: left;\n}\n\n.portal_details th {\n  white-space: nowrap;\n  padding-right: 1em;\n}\n\n.portal_details tr.padding-top th, .portal_details tr.padding-top td {\n  padding-top: 0.7em;\n}\n</style>'
   + '<style>/* required styles */\n\n.leaflet-map-pane,\n.leaflet-tile,\n.leaflet-marker-icon,\n.leaflet-marker-shadow,\n.leaflet-tile-pane,\n.leaflet-tile-container,\n.leaflet-overlay-pane,\n.leaflet-shadow-pane,\n.leaflet-marker-pane,\n.leaflet-popup-pane,\n.leaflet-overlay-pane svg,\n.leaflet-zoom-box,\n.leaflet-image-layer,\n.leaflet-layer {\n	position: absolute;\n	left: 0;\n	top: 0;\n	}\n.leaflet-container {\n	overflow: hidden;\n	-ms-touch-action: none;\n	}\n.leaflet-tile,\n.leaflet-marker-icon,\n.leaflet-marker-shadow {\n	-webkit-user-select: none;\n	   -moz-user-select: none;\n	        user-select: none;\n	-webkit-user-drag: none;\n	}\n.leaflet-marker-icon,\n.leaflet-marker-shadow {\n	display: block;\n	}\n/* map is broken in FF if you have max-width: 100% on tiles */\n.leaflet-container img {\n	max-width: none !important;\n	}\n/* stupid Android 2 doesn\'t understand "max-width: none" properly */\n.leaflet-container img.leaflet-image-layer {\n	max-width: 15000px !important;\n	}\n.leaflet-tile {\n	filter: inherit;\n	visibility: hidden;\n	}\n.leaflet-tile-loaded {\n	visibility: inherit;\n	}\n.leaflet-zoom-box {\n	width: 0;\n	height: 0;\n	}\n\n.leaflet-tile-pane    { z-index: 2; }\n.leaflet-objects-pane { z-index: 3; }\n.leaflet-overlay-pane { z-index: 4; }\n.leaflet-shadow-pane  { z-index: 5; }\n.leaflet-marker-pane  { z-index: 6; }\n.leaflet-popup-pane   { z-index: 7; }\n\n\n/* control positioning */\n\n.leaflet-control {\n	position: relative;\n	z-index: 7;\n	pointer-events: auto;\n	}\n.leaflet-top,\n.leaflet-bottom {\n	position: absolute;\n	z-index: 1000;\n	pointer-events: none;\n	}\n.leaflet-top {\n	top: 0;\n	}\n.leaflet-right {\n	right: 0;\n	}\n.leaflet-bottom {\n	bottom: 0;\n	}\n.leaflet-left {\n	left: 0;\n	}\n.leaflet-control {\n	float: left;\n	clear: both;\n	}\n.leaflet-right .leaflet-control {\n	float: right;\n	}\n.leaflet-top .leaflet-control {\n	margin-top: 10px;\n	}\n.leaflet-bottom .leaflet-control {\n	margin-bottom: 10px;\n	}\n.leaflet-left .leaflet-control {\n	margin-left: 10px;\n	}\n.leaflet-right .leaflet-control {\n	margin-right: 10px;\n	}\n\n\n/* zoom and fade animations */\n\n.leaflet-fade-anim .leaflet-tile,\n.leaflet-fade-anim .leaflet-popup {\n	opacity: 0;\n	-webkit-transition: opacity 0.2s linear;\n	   -moz-transition: opacity 0.2s linear;\n	     -o-transition: opacity 0.2s linear;\n	        transition: opacity 0.2s linear;\n	}\n.leaflet-fade-anim .leaflet-tile-loaded,\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\n	opacity: 1;\n	}\n\n.leaflet-zoom-anim .leaflet-zoom-animated {\n	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\n	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\n	     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\n	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\n	}\n.leaflet-zoom-anim .leaflet-tile,\n.leaflet-pan-anim .leaflet-tile,\n.leaflet-touching .leaflet-zoom-animated {\n	-webkit-transition: none;\n	   -moz-transition: none;\n	     -o-transition: none;\n	        transition: none;\n	}\n\n.leaflet-zoom-anim .leaflet-zoom-hide {\n	visibility: hidden;\n	}\n\n\n/* cursors */\n\n.leaflet-clickable {\n	cursor: pointer;\n	}\n.leaflet-container {\n	cursor: -webkit-grab;\n	cursor:    -moz-grab;\n	}\n.leaflet-popup-pane,\n.leaflet-control {\n	cursor: auto;\n	}\n.leaflet-dragging,\n.leaflet-dragging .leaflet-clickable,\n.leaflet-dragging .leaflet-container {\n	cursor: move;\n	cursor: -webkit-grabbing;\n	cursor:    -moz-grabbing;\n	}\n\n\n/* visual tweaks */\n\n.leaflet-container {\n	background: #ddd;\n	outline: 0;\n	}\n.leaflet-container a {\n	color: #0078A8;\n	}\n.leaflet-container a.leaflet-active {\n	outline: 2px solid orange;\n	}\n.leaflet-zoom-box {\n	border: 2px dotted #05f;\n	background: white;\n	opacity: 0.5;\n	}\n\n\n/* general typography */\n.leaflet-container {\n	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;\n	}\n\n\n/* general toolbar styles */\n\n.leaflet-bar {\n	box-shadow: 0 1px 7px rgba(0,0,0,0.65);\n	-webkit-border-radius: 4px;\n	        border-radius: 4px;\n	}\n.leaflet-bar a {\n	background-color: #fff;\n	border-bottom: 1px solid #ccc;\n	width: 26px;\n	height: 26px;\n	line-height: 26px;\n	display: block;\n	text-align: center;\n	text-decoration: none;\n	color: black;\n	}\n.leaflet-bar a,\n.leaflet-control-layers-toggle {\n	background-position: 50% 50%;\n	background-repeat: no-repeat;\n	display: block;\n	}\n.leaflet-bar a:hover {\n	background-color: #f4f4f4;\n	}\n.leaflet-bar a:first-child {\n	-webkit-border-top-left-radius: 4px;\n	        border-top-left-radius: 4px;\n	-webkit-border-top-right-radius: 4px;\n	        border-top-right-radius: 4px;\n	}\n.leaflet-bar a:last-child {\n	-webkit-border-bottom-left-radius: 4px;\n	        border-bottom-left-radius: 4px;\n	-webkit-border-bottom-right-radius: 4px;\n	        border-bottom-right-radius: 4px;\n	border-bottom: none;\n	}\n.leaflet-bar a.leaflet-disabled {\n	cursor: default;\n	background-color: #f4f4f4;\n	color: #bbb;\n	}\n\n.leaflet-touch .leaflet-bar {\n	-webkit-border-radius: 10px;\n	        border-radius: 10px;\n	}\n.leaflet-touch .leaflet-bar a {\n	width: 30px;\n	height: 30px;\n	}\n.leaflet-touch .leaflet-bar a:first-child {\n	-webkit-border-top-left-radius: 7px;\n	        border-top-left-radius: 7px;\n	-webkit-border-top-right-radius: 7px;\n	        border-top-right-radius: 7px;\n	}\n.leaflet-touch .leaflet-bar a:last-child {\n	-webkit-border-bottom-left-radius: 7px;\n	        border-bottom-left-radius: 7px;\n	-webkit-border-bottom-right-radius: 7px;\n	        border-bottom-right-radius: 7px;\n	border-bottom: none;\n	}\n\n\n/* zoom control */\n\n.leaflet-control-zoom-in {\n	font: bold 18px \'Lucida Console\', Monaco, monospace;\n	}\n.leaflet-control-zoom-out {\n	font: bold 22px \'Lucida Console\', Monaco, monospace;\n	}\n\n.leaflet-touch .leaflet-control-zoom-in {\n	font-size: 22px;\n	line-height: 30px;\n	}\n.leaflet-touch .leaflet-control-zoom-out {\n	font-size: 28px;\n	line-height: 30px;\n	}\n\n\n/* layers control */\n\n.leaflet-control-layers {\n	box-shadow: 0 1px 7px rgba(0,0,0,0.4);\n	background: #f8f8f9;\n	-webkit-border-radius: 8px;\n	        border-radius: 8px;\n	}\n.leaflet-control-layers-toggle {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAABrVBMVEUNDQ0PDw8QEBARERESEhIUFBQVFRUYGBgZGRkcHBwdHR0fHx8jIyMoKCgxMTE0NDQ1NTU2NjY4ODg5OTk6Ojo7Ozs+Pj4/Pz9AQEBBQUFDQ0NFRUVISEhMTExNTU1ZWVlaWlpmZmb///+rq6u1tbWHh4eOjo6oqKiampqdnZ2wsLC5ubmEhISLi4uZmZmSkpK1tbV6enqCgoKpqamJiYmurq66urp4eHh/f3+1tbXAwMBubm52dnacnJyEhISAgIBvb2+wsLC9vb15eXleXl5fX19mZmZoaGhsbGxtbW1ubm5vb29xcXF8fHx9fX1+fn6CgoKDg4OFhYWGhoaKioqNjY2Tk5OUlJSVlZWXl5eYmJibm5uenp6fn5+goKChoaGioqKpqamqqqqsrKyurq6vr6+xsbGzs7O0tLS1tbW2tra4uLi6urq9vb2+vr6/v7/BwcHDw8PExMTFxcXHx8fJycnKysrLy8vMzMzOzs7Pz8/Q0NDS0tLT09PV1dXW1tbX19fZ2dna2trb29vc3Nzd3d3f39/i4uLk5OTn5+fo6Ojt7e3u7u7z8/P09PRxWspKAAAARHRSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABISFxcXKC1DQ0hISE2IjIyMkMTEx8nr6+zs7O74+/v7/ChuOn8AAAGLSURBVCjPbZJLT8JAEIBnW1re3VKoETloSLjKzXhS4w836smQcCAaXyQEYxBJoXRLeW1p192GIoh7aabfzs63O4OqEC8/gYGsViyO0S9K42u4Id4GbpBkXJYU8Id3Nl2GO0gzrtIS/4bzW9uhS7ZBKXxRkFG0hwXjezKZByxCinZeSoqUAGSRuBw+2N6CcVTQzjQBGJUgVEVu6DbcgYdOcb0gYrZgCkc+SomAjlsE1XHZ1CWgVI2KsYCqKoSO1Sf8QAMf6khW0FqD+QFzvsmbqAXJgyw2FPEbBPZtMh18srXGqs0KGSngteRwNka1RMN9glij01dzXIAtPFqu/tGY9rxcBmZerpLd15h8+KAc59caTdjR+IKjWOM1esNYQ47kg7VGc0sjiRWu4ZPlXw3w25NII1/jR29pFLP8rqRLQT3B/ObTUayRMMyiLjR6UBEazsiy3+NWZrGpR40RDXEs8rg9ALpm6tFrOJb7vDsbIBtmTgPXs+wu2xu2DM7DhLyE/8xhR6pDawMAfgAd2djeY/eg2wAAAABJRU5ErkJggg==);\n	width: 36px;\n	height: 36px;\n	}\n.leaflet-touch .leaflet-control-layers-toggle {\n	width: 44px;\n	height: 44px;\n	}\n.leaflet-control-layers .leaflet-control-layers-list,\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\n	display: none;\n	}\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\n	display: block;\n	position: relative;\n	}\n.leaflet-control-layers-expanded {\n	padding: 6px 10px 6px 6px;\n	color: #333;\n	background: #fff;\n	}\n.leaflet-control-layers-selector {\n	margin-top: 2px;\n	position: relative;\n	top: 1px;\n	}\n.leaflet-control-layers label {\n	display: block;\n	}\n.leaflet-control-layers-separator {\n	height: 0;\n	border-top: 1px solid #ddd;\n	margin: 5px -10px 5px -6px;\n	}\n\n\n/* attribution and scale controls */\n\n.leaflet-container .leaflet-control-attribution {\n	background-color: rgba(255, 255, 255, 0.7);\n	box-shadow: 0 0 5px #bbb;\n	margin: 0;\n	}\n.leaflet-control-attribution,\n.leaflet-control-scale-line {\n	padding: 0 5px;\n	color: #333;\n	}\n.leaflet-container .leaflet-control-attribution,\n.leaflet-container .leaflet-control-scale {\n	font-size: 11px;\n	}\n.leaflet-left .leaflet-control-scale {\n	margin-left: 5px;\n	}\n.leaflet-bottom .leaflet-control-scale {\n	margin-bottom: 5px;\n	}\n.leaflet-control-scale-line {\n	border: 2px solid #777;\n	border-top: none;\n	color: black;\n	line-height: 1.1;\n	padding: 2px 5px 1px;\n	font-size: 11px;\n	text-shadow: 1px 1px 1px #fff;\n	background-color: rgba(255, 255, 255, 0.5);\n	box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);\n	white-space: nowrap;\n	overflow: hidden;\n	}\n.leaflet-control-scale-line:not(:first-child) {\n	border-top: 2px solid #777;\n	border-bottom: none;\n	margin-top: -2px;\n	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n	}\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\n	border-bottom: 2px solid #777;\n	}\n\n.leaflet-touch .leaflet-control-attribution,\n.leaflet-touch .leaflet-control-layers,\n.leaflet-touch .leaflet-control-zoom {\n	box-shadow: none;\n	}\n.leaflet-touch .leaflet-control-layers,\n.leaflet-touch .leaflet-control-zoom {\n	border: 4px solid rgba(0,0,0,0.3);\n	}\n\n\n/* popup */\n\n.leaflet-popup {\n	position: absolute;\n	text-align: center;\n	}\n.leaflet-popup-content-wrapper {\n	padding: 1px;\n	text-align: left;\n	-webkit-border-radius: 20px;\n	        border-radius: 20px;\n	}\n.leaflet-popup-content {\n	margin: 14px 20px;\n	line-height: 1.4;\n	}\n.leaflet-popup-content p {\n	margin: 18px 0;\n	}\n.leaflet-popup-tip-container {\n	margin: 0 auto;\n	width: 40px;\n	height: 20px;\n	position: relative;\n	overflow: hidden;\n	}\n.leaflet-popup-tip {\n	width: 15px;\n	height: 15px;\n	padding: 1px;\n\n	margin: -8px auto 0;\n\n	-webkit-transform: rotate(45deg);\n	   -moz-transform: rotate(45deg);\n	    -ms-transform: rotate(45deg);\n	     -o-transform: rotate(45deg);\n	        transform: rotate(45deg);\n	}\n.leaflet-popup-content-wrapper, .leaflet-popup-tip {\n	background: white;\n\n	box-shadow: 0 3px 14px rgba(0,0,0,0.4);\n	}\n.leaflet-container a.leaflet-popup-close-button {\n	position: absolute;\n	top: 0;\n	right: 0;\n	padding: 4px 5px 0 0;\n	text-align: center;\n	width: 18px;\n	height: 14px;\n	font: 16px/14px Tahoma, Verdana, sans-serif;\n	color: #c3c3c3;\n	text-decoration: none;\n	font-weight: bold;\n	background: transparent;\n	}\n.leaflet-container a.leaflet-popup-close-button:hover {\n	color: #999;\n	}\n.leaflet-popup-scrolled {\n	overflow: auto;\n	border-bottom: 1px solid #ddd;\n	border-top: 1px solid #ddd;\n	}\n\n\n/* div icon */\n\n.leaflet-div-icon {\n	background: #fff;\n	border: 1px solid #666;\n	}\n.leaflet-editing-icon {\n	-webkit-border-radius: 2px;\n	        border-radius: 2px;\n	}\n</style>'
 //note: smartphone.css injection moved into code/smartphone.js
   + '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Coda"/>'
@@ -93,14 +93,15 @@ document.getElementsByTagName('body')[0].innerHTML = ''
   + '      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg=="/ title="Current Location">'
   + '    </div>'
   + '    <div id="portaldetails"></div>'
-  + '    <input id="redeem" placeholder="Redeem code…" type="text"/>'
+// redeeming removed from stock site, so commented out for now. it may return...
+//  + '    <input id="redeem" placeholder="Redeem code…" type="text"/>'
   + '    <div id="toolbox">'
   + '      <a onmouseover="setPermaLink(this)" onclick="setPermaLink(this);return androidCopy(this.href)" title="URL link to this map view">Permalink</a>'
   + '      <a onclick="window.aboutIITC()" style="cursor: help">About IITC</a>'
   + '    </div>'
   + '  </div>'
   + '</div>'
-  + '<div id="updatestatus"></div>';
+  + '<div id="updatestatus"><div id="innerstatus"></div></div>';
 
 // putting everything in a wrapper function that in turn is placed in a
 // script tag on the website allows us to execute in the site’s context
@@ -161,6 +162,8 @@ window.COLORS_MOD = {VERY_RARE: '#F78AF6', RARE: '#AD8AFF', COMMON: '#84FBBD'};
 
 window.OPTIONS_RESONATOR_SELECTED = {color: '#fff', weight: 2, radius: 4, opacity: 1, clickable: false};
 window.OPTIONS_RESONATOR_NON_SELECTED = {color: '#aaa', weight: 1, radius: 3, opacity: 1, clickable: false};
+
+window.MOD_TYPE = {RES_SHIELD:'Shield', MULTIHACK:'Multi-hack', FORCE_AMP:'Force Amp', HEATSINK:'Heat Sink', TURRET:'Turret', LINK_AMPLIFIER: 'Link Amp'};
 
 window.OPTIONS_RESONATOR_LINE_SELECTED = {
   opacity: 0.7,
@@ -272,15 +275,23 @@ window.showLayerChooser = true;
 window.setupLargeImagePreview = function() {
   $('#portaldetails').on('click', '.imgpreview', function() {
     var img = $(this).find('img')[0];
+    var details = $(this).find('div.portalDetails')[0];
     //dialogs have 12px padding around the content
-    var dlgWidth = Math.max(img.naturalWidth+24,400);
-    dialog({
-      html: '<div style="text-align: center">' + img.outerHTML + '</div>',
-      title: $(this).parent().find('h3.title').text(),
-      width: dlgWidth,
-    });
-
-   });
+    var dlgWidth = Math.max(img.naturalWidth+24,500);
+    if (details) {
+      dialog({
+        html: '<div style="text-align: center">' + img.outerHTML + '</div>' + details.outerHTML,
+        title: $(this).parent().find('h3.title').text(),
+        width: dlgWidth,
+      });
+    } else {
+      dialog({
+        html: '<div style="text-align: center">' + img.outerHTML + '</div>',
+        title: $(this).parent().find('h3.title').text(),
+        width: dlgWidth,
+      });
+    }
+  });
 }
 
 // adds listeners to the layer chooser such that a long press hides
@@ -821,7 +832,7 @@ window.setupLayerChooserApi = function() {
 function boot() {
   window.debug.console.overwriteNativeIfRequired();
 
-  console.log('loading done, booting. Built: 2013-06-17-001527');
+  console.log('loading done, booting. Built: 2013-07-12-050921');
   if(window.deviceID) console.log('Your device ID: ' + window.deviceID);
   window.runOnSmartphonesBeforeBoot();
 
@@ -1240,7 +1251,7 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
   var r = window.postAjax(
     'getPaginatedPlextsV2',
     d,
-    chat.handleFaction,
+    function(data, textStatus, jqXHR) { chat.handleFaction(data, getOlderMsgs); },
     isRetry
       ? function() { window.chat._requestFactionRunning = false; }
       : function() { window.chat.requestFaction(getOlderMsgs, true) }
@@ -1251,7 +1262,7 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
 
 
 window.chat._faction = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
-window.chat.handleFaction = function(data, textStatus, jqXHR) {
+window.chat.handleFaction = function(data, olderMsgs) {
   chat._requestFactionRunning = false;
 
   if(!data || !data.result) {
@@ -1262,7 +1273,7 @@ window.chat.handleFaction = function(data, textStatus, jqXHR) {
   if(data.result.length === 0) return;
 
   var old = chat._faction.oldestTimestamp;
-  chat.writeDataToHash(data, chat._faction, false);
+  chat.writeDataToHash(data, chat._faction, false, olderMsgs);
   var oldMsgsWereAdded = old !== chat._faction.oldestTimestamp;
 
   runHooks('factionChatDataAvailable', {raw: data, processed: chat._faction.data});
@@ -1291,7 +1302,7 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
   var r = window.postAjax(
     'getPaginatedPlextsV2',
     d,
-    chat.handlePublic,
+    function(data, textStatus, jqXHR) { chat.handlePublic(data, getOlderMsgs); },
     isRetry
       ? function() { window.chat._requestPublicRunning = false; }
       : function() { window.chat.requestPublic(getOlderMsgs, true) }
@@ -1301,7 +1312,7 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
 }
 
 window.chat._public = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
-window.chat.handlePublic = function(data, textStatus, jqXHR) {
+window.chat.handlePublic = function(data, olderMsgs) {
   chat._requestPublicRunning = false;
 
   if(!data || !data.result) {
@@ -1312,7 +1323,7 @@ window.chat.handlePublic = function(data, textStatus, jqXHR) {
   if(data.result.length === 0) return;
 
   var old = chat._public.oldestTimestamp;
-  chat.writeDataToHash(data, chat._public, true);
+  chat.writeDataToHash(data, chat._public, true, olderMsgs);
   var oldMsgsWereAdded = old !== chat._public.oldestTimestamp;
 
   runHooks('publicChatDataAvailable', {raw: data, processed: chat._public.data});
@@ -1370,7 +1381,7 @@ window.chat.nicknameClicked = function(event, nickname) {
   }
 }
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel) {
+window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs) {
   $.each(newData.result, function(ind, json) {
     // avoid duplicates
     if(json[0] in storageHash.data) return true;
@@ -1465,7 +1476,10 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel) {
     // format: timestamp, autogenerated, HTML message, player guid
     storageHash.data[json[0]] = [json[1], auto, chat.renderMsg(msg, nick, time, team, msgToPlayer, systemNarrowcast), pguid];
 
-    window.setPlayerName(pguid, nick); // free nick name resolves
+    // if we're processing older messages, we could be looking at pre-name change mentions or similar
+    // so in that case, flag it so we don't overwrite existing name cache entries.
+    // (it's not perfect - the initial request has the wrong value here)
+    window.setPlayerName(pguid, nick, isOlderMsgs); // free nick name resolves. 
   });
 }
 
@@ -1994,6 +2008,7 @@ window.dialog = function(options) {
   options = options || {};
   if(isSmartphone()) {
     options.modal = true;
+    options.width = 'auto';
   }
 
   // Build an identifier for this dialog
@@ -2146,6 +2161,10 @@ window.dialog = function(options) {
 
       // This dialog is now in focus
       window.DIALOG_FOCUS = this;
+      // hint for iitc mobile that a dialog was focused
+      if (typeof android !== 'undefined' && android && android.dialogFocused) {
+        android.dialogFocused($(window.DIALOG_FOCUS).data('id'));
+      }
       $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-inactive').addClass('ui-dialog-title-active');
     }
   }, options));
@@ -2483,21 +2502,60 @@ window.getPosition = function() {
 }
 
 
-
 // MAP DATA //////////////////////////////////////////////////////////
 // these functions handle how and which entities are displayed on the
 // map. They also keep them up to date, unless interrupted by user
 // action.
+
+// debug - display a set of rectangles on the map representing each data tile. the colour will represent it's state
+window._debugDataTileStateLayer = undefined;
+
+window.debugDataTileReset = function() {
+  if (!window._debugDataTileStateLayer) {
+    window._debugDataTileStateLayer = L.layerGroup();
+    window.addLayerGroup("DEBUG Data Tiles", window._debugDataTileStateLayer, false);
+  }
+
+  window._debugDataTileIdToRectangle = {};
+  window._debugDataTileStateLayer.clearLayers();
+}
+
+window.debugCreateTile = function(qk,bounds) {
+  var s = {color: '#888', weight: 3, opacity: 0.7, fillColor: '#888', fillOpacity: 0.4, clickable: false};
+
+  bounds = new L.LatLngBounds(bounds);
+  bounds = bounds.pad(-0.02);
+
+  var l = L.rectangle(bounds,s);
+  window._debugDataTileIdToRectangle[qk] = l;
+  window._debugDataTileStateLayer.addLayer(l);
+}
+
+window.debugSetTileColour = function(qk,bordercol,fillcol) {
+  var l = window._debugDataTileIdToRectangle[qk];
+  if (l) {
+    var s = {color: bordercol, weight: 3, opacity: 0.3, fillColor: fillcol, fillOpacity: 0.1, clickable: false};
+    l.setStyle(s);
+  }
+}
 
 
 // cache for data tiles. indexed by the query key (qk)
 window._requestCache = {}
 
 // cache entries older than the fresh age, and younger than the max age, are stale. they're used in the case of an error from the server
-window.REQUEST_CACHE_FRESH_AGE = 2*60;  // if younger than this, use data in the cache rather than fetching from the server
-window.REQUEST_CACHE_MAX_AGE = 15*60;  // maximum cache age. entries are deleted from the cache after this time
+window.REQUEST_CACHE_FRESH_AGE = 60;  // if younger than this, use data in the cache rather than fetching from the server
+window.REQUEST_CACHE_MAX_AGE = 60*60;  // maximum cache age. entries are deleted from the cache after this time
+window.REQUEST_CACHE_MIN_SIZE = 200;  // if fewer than this many entries, don't expire any
+window.REQUEST_CACHE_MAX_SIZE = 2000;  // if more than this many entries, expire early
 
 window.storeDataCache = function(qk,data) {
+  // fixme? common behaviour for objects is that properties are kept in the order they're added
+  // this is handy, as it allows easy retrieval of the oldest entries for expiring
+  // however, this is not guaranteed by the standards, but all our supported browsers work this way
+
+  delete window._requestCache[qk];
+
   var d = new Date();
   window._requestCache[qk] = { time: d.getTime(), data: data };
 }
@@ -2521,17 +2579,24 @@ window.isDataCacheFresh = function(qk) {
 }
 
 window.expireDataCache = function() {
-  // TODO: add a limit on the maximum number of cache entries, and start expiring them sooner than the expiry time
-  // (might also make sense to approximate the size of cache entries, and have an overall size limit?)
-
   var d = new Date();
   var t = d.getTime()-window.REQUEST_CACHE_MAX_AGE*1000;
 
+  var cacheSize = Object.keys(window._requestCache).length;
+
   for(var qk in window._requestCache) {
-    if (window._requestCache[qk].time < t) {
+    // stop processing once we hit the minimum size
+    if (cacheSize < window.REQUEST_CACHE_MIN_SIZE) break;
+
+    // fixme? our MAX_SIZE test here assumes we're processing the oldest first. this relies
+    // on looping over object properties in the order they were added. this is true in most browsers,
+    // but is not a requirement of the standards
+    if (cacheSize > window.REQUEST_CACHE_MAX_SIZE || window._requestCache[qk].time < t) {
       delete window._requestCache[qk];
+      cacheSize--;
     }
   }
+
 }
 
 
@@ -2541,17 +2606,27 @@ window.requestData = function() {
   console.log('refreshing data');
   requests.abort();
   cleanUp();
+  window.statusTotalMapTiles = 0;
+  window.statusCachedMapTiles = 0;
+  window.statusSuccessMapTiles = 0;
+  window.statusStaleMapTiles = 0;
+  window.statusErrorMapTiles = 0;
+
+
+  debugDataTileReset();
 
   expireDataCache();
 
   //a limit on the number of map tiles to be pulled in a single request
-  var MAX_TILES_PER_BUCKET = 20;
+  var MAX_TILES_PER_BUCKET = 11;
+  // the number of separate buckets. more can be created if the size exceeds MAX_TILES_PER_BUCKET
+  var BUCKET_COUNT = 4;
 
   var bounds = clampLatLngBounds(map.getBounds());
 
   //we query the server as if the zoom level was this. it may not match the actual map zoom level
   var z = getPortalDataZoom();
-  console.log('requesting tiles at zoom '+z+' (L'+getMinPortalLevelForZoom(z)+'+ portals), map zoom is '+map.getZoom());
+  console.log('requesting data tiles at zoom '+z+' (L'+getMinPortalLevelForZoom(z)+'+ portals), map zoom is '+map.getZoom());
 
   var x1 = lngToTile(bounds.getWest(), z);
   var x2 = lngToTile(bounds.getEast(), z);
@@ -2569,10 +2644,25 @@ window.requestData = function() {
   for (var x = x1; x <= x2; x++) {
     for (var y = y1; y <= y2; y++) {
       var tile_id = pointToTileId(z, x, y);
+      var latNorth = tileToLat(y,z);
+      var latSouth = tileToLat(y+1,z);
+      var lngWest = tileToLng(x,z);
+      var lngEast = tileToLng(x+1,z);
+
+      debugCreateTile(tile_id,[[latSouth,lngWest],[latNorth,lngEast]]);
+      window.statusTotalMapTiles++;
+
+      // TODO?: if the selected portal is in this tile, always fetch the data
       if (isDataCacheFresh(tile_id)) {
+        // TODO: don't add tiles from the cache when 1. they were fully visible before, and 2. the zoom level is unchanged
+        // TODO?: if a closer zoom level has all four tiles in the cache, use them instead?
         cachedData.result.map[tile_id] = getDataCache(tile_id);
+        debugSetTileColour(tile_id,'#0f0','#ff0');
+        window.statusCachedMapTiles++;
       } else {
-        var bucket = (Math.floor(x/2) % 2) + ":" + (Math.floor(y/2) % 2);
+        // group requests into buckets based on the tile coordinate.
+        var bucket = Math.floor(x+y*(BUCKET_COUNT/2))%BUCKET_COUNT;
+
         if (!tiles[bucket]) {
           //create empty bucket
           tiles[bucket] = [];
@@ -2585,14 +2675,28 @@ window.requestData = function() {
         }
 
         requestTileCount++;
-        tiles[bucket].push(generateBoundsParams(
+
+        var boundsParam = generateBoundsParams(
           tile_id,
-          tileToLat(y + 1, z),
-          tileToLng(x, z),
-          tileToLat(y, z),
-          tileToLng(x + 1, z)
-        ));
+          latSouth,
+          lngWest,
+          latNorth,
+          lngEast
+        );
+
+        // when the server is returning 'timeout' errors for some tiles in the list, it's always the tiles
+        // at the end of the request. therefore, let's push tiles we don't have cache entries for to the front, and those we do to the back
+        if (getDataCache(tile_id)) {
+          // cache entry exists - push to back
+          tiles[bucket].push(boundsParam);
+        } else {
+          // no cache entry - unshift to front
+          tiles[bucket].unshift(boundsParam);
+        }
+
+        debugSetTileColour(tile_id,'#00f','#000');
       }
+
     }
   }
 
@@ -2604,17 +2708,43 @@ window.requestData = function() {
   $.each(tiles, function(ind, tls) {
     data = { zoom: z };
     data.boundsParamsList = tls;
-    window.requests.add(window.postAjax('getThinnedEntitiesV2', data, function(data, textStatus, jqXHR) { window.handleDataResponse(data,false); }, window.handleFailedRequest));
+    // keep a list of tile_ids with each request. in the case of a server error, we can try and use cached tiles if available
+    var tile_ids = []
+    $.each(tls,function(i,req) { tile_ids.push(req.qk); });
+    window.requests.add(window.postAjax('getThinnedEntitiesV2', data, function(data, textStatus, jqXHR) { window.handleDataResponse(data,false,tile_ids); }, function() { window.handleFailedRequest(tile_ids); }));
   });
 
   // process the requests from the cache
   console.log('got '+Object.keys(cachedData.result.map).length+' data tiles from cache');
-  handleDataResponse(cachedData, true);
+  if(Object.keys(cachedData.result.map).length > 0) {
+    handleDataResponse(cachedData, true);
+  }
 
 }
 
 // Handle failed map data request
-window.handleFailedRequest = function() {
+window.handleFailedRequest = function(tile_ids) {
+  console.log('request failed: tiles '+tile_ids.join(','));
+
+  var cachedData = { result: { map: {} } };  
+  $.each(tile_ids, function(ind,tile_id) {
+    var cached = getDataCache(tile_id);
+    if (cached) {
+      // we have stale cached data - use it
+      cachedData.result.map[tile_id] = cached;
+      debugSetTileColour(tile_id,'#800','#ff0');
+      console.log('(using stale cache entry for map tile '+tile_id+')');
+      window.statusStaleMapTiles++;
+    } else {
+      // no cached data
+      debugSetTileColour(tile_id,'#800','#f00');
+      window.statusErrorMapTiles++;
+    }
+  });
+  if(Object.keys(cachedData.result.map).length > 0) {
+    handleDataResponse(cachedData, true);
+  }
+
   if(requests.isLastRequest('getThinnedEntitiesV2')) {
     var leftOverPortals = portalRenderLimit.mergeLowLevelPortals(null);
     handlePortalsRender(leftOverPortals);
@@ -2623,12 +2753,12 @@ window.handleFailedRequest = function() {
 }
 
 // works on map data response and ensures entities are drawn/updated.
-window.handleDataResponse = function(data, fromCache) {
+window.handleDataResponse = function(data, fromCache, tile_ids) {
   // remove from active ajax queries list
   if(!data || !data.result) {
     window.failedRequestCount++;
     console.warn(data);
-    handleFailedRequest();
+    handleFailedRequest(tile_ids);
     return;
   }
 
@@ -2641,23 +2771,36 @@ window.handleDataResponse = function(data, fromCache) {
   var ppp = {};
   var p2f = {};
   $.each(m, function(qk, val) {
-    var thisFromCache = fromCache;
-    if('error' in val) {
-      console.log('map data tile '+qk+' response error: '+val.error);
 
-      // try to use data in the cache, even if it's stale
-      val = getDataCache(qk);
+    // if this request wasn't from the cache, check it's status. store in the cache if good
+    // for debugging, we set the debug tile colours. cached tiles have colours set elsewhere so are not set here
+    if (!fromCache) {
 
-      if (!val) {
-        // no data in cache for this tile - skip it
-        return true; // $.each 'continue'
+      if('error' in val) {
+        console.log('map data tile '+qk+' response error: '+val.error);
+
+        // try to use data in the cache, even if it's stale
+        var cacheVal = getDataCache(qk);
+
+        if (!cacheVal) {
+          debugSetTileColour(qk, '#f00','#f00');
+          // no data in cache for this tile. continue processing - it's possible it also has some valid data
+          window.statusErrorMapTiles++;
+        } else {
+          // stale cache entry exists - use it
+          val = cacheVal;
+          debugSetTileColour(qk, '#f00','#ff0');
+          console.log('(using stale cache entry for map tile '+qk+')');
+          window.statusStaleMapTiles++;
+        }
       } else {
-        console.log('(using stale cache entry for map tile)');
-        thisFromCache = true;
+        // not an error - store this tile into the cache
+        storeDataCache(qk,val);
+        debugSetTileColour(qk, '#0f0','#0f0');
+        window.statusSuccessMapTiles++;
       }
-    }
 
-    if (!thisFromCache) storeDataCache(qk,val);
+    }
 
     $.each(val.deletedGameEntityGuids || [], function(ind, guid) {
       if(getTypeByGuid(guid) === TYPE_FIELD && window.fields[guid] !== undefined) {
@@ -2860,6 +3003,32 @@ window.removeByGuid = function(guid) {
 }
 
 
+// Separation of marker style setting from the renderPortal method
+// Having this as a separate function allows subsituting alternate marker rendering (for plugins)
+window.getMarker = function(ent, portalLevel, latlng, team) {
+  var lvWeight = Math.max(2, Math.floor(portalLevel) / 1.5);
+  var lvRadius = Math.floor(portalLevel) + 4;
+  if(team === window.TEAM_NONE) {
+    lvRadius = 7;
+  }
+    
+  var p = L.circleMarker(latlng, {
+    radius: lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
+    color: ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
+    opacity: 1,
+    weight: lvWeight,
+    fillColor: COLORS[team],
+    fillOpacity: 0.5,
+    clickable: true,
+    level: portalLevel,
+    team: team,
+    ent: ent,
+    details: ent[2],
+    guid: ent[0]});
+    
+    return p;
+}
+
 
 // renders a portal on the map from the given entity
 window.renderPortal = function(ent) {
@@ -2908,25 +3077,7 @@ window.renderPortal = function(ent) {
   // pre-loads player names for high zoom levels
   loadPlayerNamesForPortal(ent[2]);
 
-  var lvWeight = Math.max(2, Math.floor(portalLevel) / 1.5);
-  var lvRadius = Math.floor(portalLevel) + 4;
-  if(team === window.TEAM_NONE) {
-    lvRadius = 7;
-  }
-
-  var p = L.circleMarker(latlng, {
-    radius: lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
-    color: ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
-    opacity: 1,
-    weight: lvWeight,
-    fillColor: COLORS[team],
-    fillOpacity: 0.5,
-    clickable: true,
-    level: portalLevel,
-    team: team,
-    ent: ent,
-    details: ent[2],
-    guid: ent[0]});
+  var p = getMarker(ent, portalLevel, latlng, team);
 
   p.on('remove', function() {
     var portalGuid = this.options.guid
@@ -3444,7 +3595,11 @@ window.resolvePlayerNames = function() {
 }
 
 
-window.setPlayerName = function(guid, nick) {
+window.setPlayerName = function(guid, nick, uncertain) {
+  // the 'uncertain' flag is set when we're scrolling back through chat. it's possible in this case
+  // to come across a message from before a name change. these should be ignored if existing cache entries exist
+  if(uncertain && guid in localStorage) return;
+
   if($.trim(('' + nick)).slice(0, 5) === '{"L":' && !window.alertFor37WasShown) {
     window.alertFor37WasShown = true;
     alert('You have run into bug #37. Please help me solve it!\nCopy and paste this text and post it here:\nhttps://github.com/breunigs/ingress-intel-total-conversion/issues/37\nIf copy & pasting doesn’t work, make a screenshot instead.\n\n\n' + window.debug.printStackTrace() + '\n\n\n' + JSON.stringify(nick));
@@ -3520,6 +3675,41 @@ window.renderPortalDetails = function(guid) {
   var perma = '/intel?ll='+lat+','+lng+'&z=17&pll='+lat+','+lng;
   var imgTitle = 'title="'+getPortalDescriptionFromDetails(d)+'\n\nClick to show full image."';
   var poslinks = 'window.showPortalPosLinks('+lat+','+lng+',\''+escapeJavascriptString(d.portalV2.descriptiveText.TITLE)+'\')';
+  var portalDetailObj = window.getPortalDescriptionFromDetailsExtended(d);
+
+
+  var portalDetailedDescription = '';
+
+  if(portalDetailObj) {
+    portalDetailedDescription = '<table description="Portal Photo Details" class="portal_details">';
+
+    // TODO (once the data supports it) - portals can have multiple photos. display all, with navigation between them
+    // (at this time the data isn't returned from the server - although a count of images IS returned!)
+
+    if(portalDetailObj.submitter.name.length > 0) {
+      if(portalDetailObj.submitter.team) {
+        submitterSpan = '<span class="' + (portalDetailObj.submitter.team === 'RESISTANCE' ? 'res' : 'enl') + ' nickname">';
+      } else {
+        submitterSpan = '<span class="none">';
+      }
+      portalDetailedDescription += '<tr><th>Photo by:</th><td>' + submitterSpan
+                                + escapeHtmlSpecialChars(portalDetailObj.submitter.name) + '</span> (' + portalDetailObj.submitter.voteCount + ' votes)</td></tr>';
+    }
+    if(portalDetailObj.submitter.link.length > 0) {
+      portalDetailedDescription += '<tr><th>Photo from:</th><td><a href="'
+                                + escapeHtmlSpecialChars(portalDetailObj.submitter.link) + '">' + escapeHtmlSpecialChars(portalDetailObj.submitter.link) + '</a></td></tr>';
+    }
+
+    if(portalDetailObj.description) {
+      portalDetailedDescription += '<tr class="padding-top"><th>Description:</th><td>' + escapeHtmlSpecialChars(portalDetailObj.description) + '</td></tr>';
+    }
+//    if(d.portalV2.descriptiveText.ADDRESS) {
+//      portalDetailedDescription += '<tr><th>Address:</th><td>' + escapeHtmlSpecialChars(d.portalV2.descriptiveText.ADDRESS) + '</td></tr>';
+//    }
+
+    portalDetailedDescription += '</table>';
+  }
+
 
   $('#portaldetails')
     .attr('class', TEAM_TO_CSS[getTeam(d)])
@@ -3528,8 +3718,9 @@ window.renderPortalDetails = function(guid) {
       + '<span class="close" onclick="unselectOldPortal();" title="Close">X</span>'
       // help cursor via ".imgpreview img"
       + '<div class="imgpreview" '+imgTitle+' style="background-image: url('+img+')">'
-      + '<img class="hide" src="'+img+'"/>'
       + '<span id="level">'+Math.floor(getPortalLevel(d))+'</span>'
+      + '<div class="portalDetails">'+ portalDetailedDescription + '</div>'
+      + '<img class="hide" src="'+img+'"/></div>'
       + '</div>'
       + '<div class="mods">'+getModDetails(d)+'</div>'
       + randDetails
@@ -3599,6 +3790,10 @@ window.unselectOldPortal = function() {
   if(oldPortal) portalResetColor(oldPortal);
   selectedPortal = null;
   $('#portaldetails').html('');
+  if(isSmartphone()) {
+    $('.fullimg').remove();
+    $('#mobileinfo').html('');
+  }
   clearPortalIndicators();
 }
 
@@ -3613,8 +3808,8 @@ window.getRangeText = function(d) {
   return ['range',
       '<a onclick="window.rangeLinkClick()">'
     + (range > 1000
-      ? Math.round(range/1000) + ' km'
-      : Math.round(range)      + ' m')
+      ? Math.floor(range/1000) + ' km'
+      : Math.floor(range)      + ' m')
     + '</a>'];
 }
 
@@ -3626,6 +3821,43 @@ window.getPortalDescriptionFromDetails = function(details) {
   if(descObj.ATTRIBUTION)
     desc += '\nby '+descObj.ATTRIBUTION+' ('+descObj.ATTRIBUTION_LINK+')';
   return desc;
+}
+
+// Grabs more info, including the submitter name for the current main
+// portal image
+window.getPortalDescriptionFromDetailsExtended = function(details) {
+  var descObj = details.portalV2.descriptiveText;
+  var photoStreamObj = details.photoStreamInfo;
+
+  var submitterObj = new Object();
+  submitterObj.type = "";
+  submitterObj.name = "Unknown";
+  submitterObj.team = "";
+  submitterObj.link = "";
+  submitterObj.voteCount = 0;
+
+  if(photoStreamObj && photoStreamObj.hasOwnProperty("coverPhoto") && photoStreamObj.coverPhoto.hasOwnProperty("attributionMarkup")) {
+    var attribution = photoStreamObj.coverPhoto.attributionMarkup;
+    submitterObj.type = attribution[0];
+    if(attribution[1].hasOwnProperty("plain"))
+      submitterObj.name = attribution[1].plain;
+    if(attribution[1].hasOwnProperty("team"))
+      submitterObj.team = attribution[1].team;
+    if(attribution[1].hasOwnProperty("attributionLink"))
+      submitterObj.link = attribution[1].attributionLink;
+    if(photoStreamObj.coverPhoto.hasOwnProperty("voteCount"))
+      submitterObj.voteCount = photoStreamObj.coverPhoto.voteCount;
+  }
+
+
+  var portalDetails = {
+    title: descObj.TITLE,
+    description: descObj.DESCRIPTION,
+    address: descObj.ADDRESS,
+    submitter: submitterObj
+  };
+
+  return portalDetails;
 }
 
 
@@ -3664,7 +3896,19 @@ window.getModDetails = function(d) {
         modTooltip += 'Stats:';
         for (var key in mod.stats) {
           if (!mod.stats.hasOwnProperty(key)) continue;
-          modTooltip += '\n+' +  mod.stats[key] + ' ' + key.capitalize().replace(/_/g,' ');
+          var val = mod.stats[key];
+
+          if (key === 'REMOVAL_STICKINESS' && val == 0) continue;  // stat on all mods recently - unknown meaning, not displayed in stock client
+
+          // special formatting for known mod stats, where the display of the raw value is less useful
+          if (mod.type === 'HEATSINK' && key === 'HACK_SPEED') val = (val/10000)+'%'; // 500000 = 50%
+          else if (mod.type === 'FORCE_AMP' && key === 'FORCE_AMPLIFIER') val = (val/1000)+'x';  // 2000 = 2x
+          else if (mod.type === 'LINK_AMPLIFIER' && key === 'LINK_RANGE_MULTIPLIER') val = (val/1000)+'x' // 2000 = 2x
+          else if (mod.type === 'TURRET' && key === 'HIT_BONUS') val = (val/10000)+'%'; // 2000 = 0.2% (although this seems pretty small to be useful?)
+          else if (mod.type === 'TURRET' && key === 'ATTACK_FREQUENCY') val = (val/1000)+'x' // 2000 = 2x
+          // else display unmodified. correct for shield mitigation and multihack - unknown for future/other mods
+
+          modTooltip += '\n+' +  val + ' ' + key.capitalize().replace(/_/g,' ');
         }
       }
 
@@ -3914,8 +4158,38 @@ window.getPortalRange = function(d) {
     lvl += parseInt(reso.level);
   });
   if(resoMissing) return 0;
-  return 160*Math.pow(getPortalLevel(d), 4);
+
+  var range = 160*Math.pow(getPortalLevel(d), 4);
+
+  var boost = getLinkAmpRangeBoost(d);
+
+  return range*boost;
+
 }
+
+window.getLinkAmpRangeBoost = function(d) {
+  // additional range boost calculation
+  // (at the time of writing, only rare link amps have been seen in the wild, so there's a little guesswork at how
+  // the stats work and combine - jon 2013-06-26)
+
+  // link amps scale: first is full, second half, the last two a quarter
+  var scale = [1.0, 0.5, 0.25, 0.25];
+
+  var boost = 1.0;  // initial boost is 1.0 (i.e. no boost over standard range)
+  var count = 0;
+
+  $.each(d.portalV2.linkedModArray, function(ind, mod) {
+    if(mod && mod.type === 'LINK_AMPLIFIER' && mod.stats && mod.stats.LINK_RANGE_MULTIPLIER) {
+      // link amp stat LINK_RANGE_MULTIPLIER is 2000 for rare, and gives 2x boost to the range
+      var baseMultiplier = mod.stats.LINK_RANGE_MULTIPLIER/1000;
+      boost += (baseMultiplier-1)*scale[count];
+      count++;
+    }
+  });
+
+  return boost;
+}
+
 
 window.getAvgResoDist = function(d) {
   var sum = 0, resos = 0;
@@ -4571,6 +4845,12 @@ window.setupRedeem = function() {
 
 window.activeRequests = [];
 window.failedRequestCount = 0;
+window.statusTotalMapTiles = 0;
+window.statusCachedMapTiles = 0;
+window.statusSuccessMapTiles = 0;
+window.statusStaleMapTiles = 0;
+window.statusErrorMapTiles = 0;
+
 
 window.requests = function() {}
 
@@ -4605,7 +4885,7 @@ window.requests.abort = function() {
 // to website. Updates info in layer chooser.
 window.renderUpdateStatus = function() {
 
-  var t = '<div><span class="help portallevel" title="Indicates portal levels displayed.  Zoom in to display lower level portals."><b>portals</b>: ';
+  var t = '<span class="help portallevel" title="Indicates portal levels displayed.  Zoom in to display lower level portals."><b>portals</b>: ';
   var minlvl = getMinPortalLevel();
   if(minlvl === 0)
     t += 'all';
@@ -4618,12 +4898,22 @@ window.renderUpdateStatus = function() {
     t += '<span class="help" title="Paused due to user interaction">paused</span';
   else if(isIdle())
     t += '<span style="color:#888">Idle</span>';
-  else if(window.activeRequests.length > 0)
-    t += window.activeRequests.length + ' requests';
   else if(window.requests._quickRefreshPending)
     t += 'refreshing';
-  else
-    t += 'Up to date';
+  else if(window.activeRequests.length > 0)
+    t += window.activeRequests.length + ' requests';
+  else {
+    // tooltip with detailed tile counts
+    t += '<span class="help" title="'+window.statusTotalMapTiles+' tiles: '+window.statusCachedMapTiles+' cached, '+window.statusSuccessMapTiles+' successful, '+window.statusStaleMapTiles+' stale, '+window.statusErrorMapTiles+' failed">';
+
+    // basic error/out of date/up to date message
+    if (window.statusErrorMapTiles) t += '<span style="color:#f66">Errors</span>';
+    else if (window.statusStaleMapTiles) t += '<span style="color:#fa6">Out of date</span>';
+    else t += 'Up to date';
+  
+    t += '</span>';
+
+  }
   t += '</span>';
 
   if(renderLimitReached())
@@ -4631,8 +4921,6 @@ window.renderUpdateStatus = function() {
 
   if(window.failedRequestCount > 0)
     t += ' <span style="color:#f66">' + window.failedRequestCount + ' failed</span>'
-
-  t += '</div>';
 
   var portalSelection = $('.leaflet-control-layers-overlays label');
   //it's an array - 0=unclaimed, 1=lvl 1, 2=lvl 2, ..., 8=lvl 8 - 9 relevant entries
@@ -4642,7 +4930,7 @@ window.renderUpdateStatus = function() {
   portalSelection.slice(minlvl, 8+1).removeClass('disabled').attr('title', '');
 
 
-  $('#updatestatus').html(t);
+  $('#innerstatus').html(t);
   //$('#updatestatus').click(function() { startRefreshTimeout(10); });
   //. <a style="cursor: pointer" onclick="startRefreshTimeout(10)" title="Refresh">⟳</a>';
 }
@@ -4743,7 +5031,7 @@ window.runOnSmartphonesBeforeBoot = function() {
 
   // add smartphone stylesheet
   headHTML = document.getElementsByTagName('head')[0].innerHTML;
-  headHTML += '<style>body {\n  background: #000;\n  color: #fff;\n}\n\n#sidebar, #updatestatus, #chatcontrols, #chat, #chatinput {\n  background: #0B3351 !important\n}\n\n.leaflet-top .leaflet-control {\n  margin-top: 5px !important;\n  margin-left: 5px !important;\n}\n\n.leaflet-control-layers {\n  display: none;    /* hide layer control - it\'s now handled by an in-app option */\n}\n\n#geosearch {\n  width: 100%;\n}\n\n#geosearchwrapper img {\n  display: none;\n}\n\n#chatcontrols {\n  height: 38px;\n  width: 100%;\n  display: none !important;\n}\n\n/* hide shrink button */\n#chatcontrols a:first-child {\n  display: none;\n}\n\n#chatcontrols a {\n  width: 50px;\n  height:36px;\n  overflow: hidden;\n  vertical-align: middle;\n  line-height: 36px;\n  text-decoration: none;\n  -moz-box-sizing: border-box;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chat {\n  left:0;\n  right:0;\n  top: 1px !important;\n  bottom:30px;\n  width: auto;\n}\n\n#chatinput {\n  width: 100%;\n  height: 30px;\n}\n\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 77px;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n#sidebartoggle {\n  display: none !important;\n}\n\n#scrollwrapper {\n  bottom: 0;\n  max-height: none !important;\n  width: 100% !important;\n  right: 0;\n  left:0;\n}\n\n#sidebar {\n  width: 100% !important;\n  min-height: 100%;\n  border:0;\n}\n\n#sidebar > * {\n  width: 100%;\n}\n\n#playerstat {\n  margin-top: 5px;\n}\n\n#portaldetails {\n  min-height: 0;\n}\n\n.fullimg {\n  width: 100%;\n}\n\n\n#portal_highlight_select{\n  top:0px !important;\n  left:0px !important;\n}\n</style>';
+  headHTML += '<style>body {\n  background: #000;\n  color: #fff;\n}\n\n#updatestatus {\n  background: #262c32;\n  width: 100%;\n  color: #d4d5d6;\n  border: 0;\n}\n\n#innerstatus {\n  float: right;\n  max-width: 50%;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n#mobileinfo {\n  float: left;\n  max-width: 50%;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n#sidebar, #chatcontrols, #chat, #chatinput {\n  background: #0B3351 !important;\n}\n\n.leaflet-top .leaflet-control {\n  margin-top: 5px !important;\n  margin-left: 5px !important;\n}\n\n.leaflet-control-layers {\n  display: none;    /* hide layer control - it\'s now handled by an in-app option */\n}\n\n#geosearch {\n  width: 100%;\n}\n\n#geosearchwrapper img {\n  display: none;\n}\n\n#chatcontrols {\n  height: 38px;\n  width: 100%;\n  display: none !important;\n}\n\n/* hide shrink button */\n#chatcontrols a:first-child {\n  display: none;\n}\n\n#chatcontrols a {\n  width: 50px;\n  height:36px;\n  overflow: hidden;\n  vertical-align: middle;\n  line-height: 36px;\n  text-decoration: none;\n  -moz-box-sizing: border-box;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chat {\n  left:0;\n  right:0;\n  top: 1px !important;\n  bottom:30px;\n  width: auto;\n}\n\n#chatinput {\n  width: 100%;\n  height: 30px;\n}\n\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 77px;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n#sidebartoggle {\n  display: none !important;\n}\n\n#scrollwrapper {\n  bottom: 0;\n  max-height: none !important;\n  width: 100% !important;\n  right: 0;\n  left:0;\n}\n\n#sidebar {\n  width: 100% !important;\n  min-height: 100%;\n  border:0;\n}\n\n#sidebar > * {\n  width: 100%;\n}\n\n#playerstat {\n  margin-top: 5px;\n}\n\n#portaldetails {\n  min-height: 0;\n}\n\n.fullimg {\n  width: 100%;\n}\n\n\n#portal_highlight_select{\n  top:0px !important;\n  left:0px !important;\n}\n</style>';
   document.getElementsByTagName('head')[0].innerHTML = headHTML;
 
   // don’t need many of those
@@ -4789,11 +5077,29 @@ window.runOnSmartphonesBeforeBoot = function() {
   });
 }
 
+window.smartphoneInfo = function(data) {
+  var d = data.portalDetails;
+  var t = 'L' + Math.floor(getPortalLevel(d));
+  var percentage = '0%';
+  var totalEnergy = getTotalPortalEnergy(d);
+  if(getTotalPortalEnergy(d) > 0) {
+    percentage = Math.floor((getCurrentPortalEnergy(d) / getTotalPortalEnergy(d) * 100)) + '%';
+  }
+  t += ' ' + percentage + ' ';
+  t += d.portalV2.descriptiveText.TITLE;
+
+  $('#mobileinfo').html(t);
+}
+
 window.runOnSmartphonesAfterBoot = function() {
   if(!isSmartphone()) return;
   console.warn('running smartphone post boot stuff');
 
   smartphone.mapButton.click();
+
+  // add a div/hook for updating mobile info
+  $('#updatestatus').prepend('<div id="mobileinfo"></div>');
+  window.addHook('portalDetailsUpdated', window.smartphoneInfo);
 
   // disable img full view
   $('#portaldetails').off('click', '**');
@@ -4828,7 +5134,7 @@ window.runOnSmartphonesAfterBoot = function() {
 // UTILS + MISC  ///////////////////////////////////////////////////////
 
 window.aboutIITC = function(){
-  var v = 'local-2013-06-17-001527';
+  var v = 'local-2013-07-12-050921';
   var attrib = '<p>This project is licensed under the permissive <a href="http://www.isc.org/software/license">ISC license</a>. Parts imported from other projects remain under their respective licenses:</p>\n\n<ul>\n<li><a href="https://github.com/bryanwoods/autolink-js">autolink-js by Bryan Woods; MIT</a></li>\n<li><a href="https://github.com/chriso/load.js">load.js by Chris O\'Hara; MIT</a></li>\n<li><a href="http://leafletjs.com/">leaflet.js; custom license (but appears free)</a></li>\n<li><a href="https://github.com/Leaflet/Leaflet.draw">leaflet.draw.js by jacobtoye; MIT</a></li>\n<li>\n<a href="https://github.com/shramov/leaflet-plugins">leaflet_google.js by Pavel Shramov; same as Leaflet</a> (modified, though)</li>\n<li><a href="https://github.com/jeromeetienne/jquery-qrcode">jquery.qrcode.js by Jerome Etienne; MIT</a></li>\n<li><a href="https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet">oms.min.js by George MacKerron; MIT</a></li>\n<li><a href="https://github.com/richadams/jquery-taphold">taphold.js by Rich Adams; unknown</a></li>\n<li><a href="https://github.com/kartena/Leaflet.Pancontrol">L.Control.Pan.js by Kartena AB; same as Leaflet</a></li>\n<li><a href="https://github.com/kartena/Leaflet.zoomslider">L.Control.Zoomslider.js by Kartena AB; same as Leaflet</a></li>\n<li>StackOverflow-CopyPasta is attributed in the source; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-Wiki</a>\n</li>\n<li>all Ingress/Niantic related stuff obviously remains non-free and is still copyrighted by Niantic/Google</li>\n</ul>';
   var contrib = '<p>So far, these people have contributed:</p>\n\n<p><a href="https://github.com/Bananeweizen">Bananeweizen</a>,\n<a href="https://github.com/blakjakau">blakjakau</a>,\n<a href="https://github.com/boombuler">boombuler</a>,\n<a href="https://github.com/breunigs">breunigs</a>,\n<a href="https://github.com/ccjon">ccjon</a>,\n<a href="https://github.com/cmrn">cmrn</a>,\n<a href="https://github.com/epf">epf</a>,\n<a href="https://github.com/Fragger">Fragger</a>,\n<a href="https://github.com/integ3r">integ3r</a>,\n<a href="https://github.com/j16sdiz">j16sdiz</a>,\n<a href="https://github.com/JasonMillward">JasonMillward</a>,\n<a href="https://github.com/jonatkins">jonatkins</a>,\n<a href="https://github.com/leCradle">leCradle</a>,\n<a href="https://github.com/Merovius">Merovius</a>,\n<a href="https://github.com/mledoze">mledoze</a>,\n<a href="https://github.com/OshiHidra">OshiHidra</a>,\n<a href="https://github.com/phoenixsong6">phoenixsong6</a>,\n<a href="https://github.com/Pirozek">Pirozek</a>,\n<a href="https://github.com/saithis">saithis</a>,\n<a href="https://github.com/Scrool">Scrool</a>,\n<a href="https://github.com/sorgo">sorgo</a>,\n<a href="https://github.com/tpenner">tpenner</a>,\n<a href="https://github.com/vita10gy">vita10gy</a>,\n<a href="https://github.com/Xelio">Xelio</a>,\n<a href="https://github.com/ZauberNerd">ZauberNerd</a>,\n<a href="https://github.com/waynn">waynn</a></p>'
   var a = ''

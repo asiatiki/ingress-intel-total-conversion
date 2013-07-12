@@ -2,11 +2,11 @@
 // @id             iitc-plugin-keys-on-map@xelio
 // @name           IITC plugin: Keys on map
 // @category       Keys
-// @version        0.2.1.20130617.1527
+// @version        0.2.1.20130712.50921
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-06-17-001527] Show keys in keys plugin on map.
+// @description    [local-2013-07-12-050921] Show keys in keys plugin on map.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

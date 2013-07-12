@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id          iitc-plugin-keys-import@dnc
 // @name        IITC plugin: Import keys
-// @version     0.0.120130617.1527
+// @version     0.0.120130712.50921
 // @namespace   https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL   none
 // @downloadURL none
-// @description [local-2013-06-17-001527] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
+// @description [local-2013-07-12-050921] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
 // @include     https://www.ingress.com/intel*
 // @include     http://www.ingress.com/intel*
 // @include     https://m-dot-betaspike.appspot.com/handshake*
@@ -58,7 +58,7 @@ window.plugin.importkeys.openDialog = function(event) {
     return;
   }
   var handshakeUrl = window.plugin.importkeys.APPSPOT_URL + '/handshake?json='
-    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-06-07T16:49:41Z 63e36378f5e8 opt', 'deviceSoftwareVersion': '4.1.1'}));
+    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-06-28T23:28:27Z 760a7a8ffc90 opt', 'deviceSoftwareVersion': '4.1.1'}));
   var div = document.createElement('div');
   var span = document.createElement('span');
   span.appendChild(document.createTextNode('Log in below to import your Ingress inventory. (Or try again in a '));
