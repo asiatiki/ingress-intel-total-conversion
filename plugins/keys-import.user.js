@@ -1,18 +1,19 @@
 // ==UserScript==
-// @id          iitc-plugin-keys-import@dnc
-// @name        IITC plugin: Import keys
-// @version     0.0.1@@DATETIMEVERSION@@
-// @namespace   https://github.com/jonatkins/ingress-intel-total-conversion
-// @updateURL   @@UPDATEURL@@
-// @downloadURL @@DOWNLOADURL@@
-// @description [@@BUILDNAME@@-@@BUILDDATE@@] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
-// @include     https://www.ingress.com/intel*
-// @include     http://www.ingress.com/intel*
-// @include     https://m-dot-betaspike.appspot.com/handshake*
-// @match       https://www.ingress.com/intel*
-// @match       http://www.ingress.com/intel*
-// @match       https://m-dot-betaspike.appspot.com/handshake*
-// @grant       none
+// @id             iitc-plugin-keys-import@dnc
+// @name           IITC plugin: Import keys
+// @category       Keys
+// @version        0.1.0.@@DATETIMEVERSION@@
+// @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
+// @updateURL      @@UPDATEURL@@
+// @downloadURL    @@DOWNLOADURL@@
+// @description    [@@BUILDNAME@@-@@BUILDDATE@@] Import the list of portal keys from your inventory. Install the 'Keys' plugin first.
+// @include        https://www.ingress.com/intel*
+// @include        http://www.ingress.com/intel*
+// @include        https://m-dot-betaspike.appspot.com/handshake*
+// @match          https://www.ingress.com/intel*
+// @match          http://www.ingress.com/intel*
+// @match          https://m-dot-betaspike.appspot.com/handshake*
+// @grant          none
 // ==/UserScript==
 
 function wrapper() {
