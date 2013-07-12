@@ -132,8 +132,13 @@ public class IITC_SettingsFragment extends PreferenceFragment {
                              boolean additional) {
 
         // now parse plugin name, description and category
-        String header = src.substring(src.indexOf("==UserScript=="),
-                src.indexOf("==/UserScript=="));
+        int start = src.indexOf("==UserScript==");
+        int end = src.indexOf("==/UserScript==");
+        if (start == -1 || end == -1) {
+                // this file isn't a real userscript, i.e. keys-import-inject.js
+                return;
+        }
+        String header = src.substring(start, end);
         // remove new line comments and replace with space
         // this way we get double spaces instead of newline + double slash
         header = header.replace("\n//", " ");
