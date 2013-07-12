@@ -58,7 +58,7 @@ window.plugin.importkeys.openDialog = function(event) {
     return;
   }
   var handshakeUrl = window.plugin.importkeys.APPSPOT_URL + '/handshake?json='
-    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-06-07T16:49:41Z 63e36378f5e8 opt', 'deviceSoftwareVersion': '4.1.1'}));
+    + encodeURIComponent(window.JSON.stringify({'nemesisSoftwareVersion': '2013-06-28T23:28:27Z 760a7a8ffc90 opt', 'deviceSoftwareVersion': '4.1.1'}));
   var div = document.createElement('div');
   var span = document.createElement('span');
   span.appendChild(document.createTextNode('Log in below to import your Ingress inventory. (Or try again in a '));
