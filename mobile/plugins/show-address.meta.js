@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-address@vita10gy
 // @name           IITC plugin: show portal address in sidebar
 // @category       Portal Info
-// @version        0.2.2.20130712.61928
+// @version        0.2.2.20130716.230720
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-12-061928] Portal address will show in the sidebar.
+// @description    [mobile-2013-07-16-230720] Portal address will show in the sidebar.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

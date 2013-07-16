@@ -2,11 +2,11 @@
 // @id             iitc-plugin-portals-list@teo96
 // @name           IITC plugin: show list of portals
 // @category       Info
-// @version        0.0.14.20130712.61928
+// @version        0.0.14.20130716.230720
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-12-061928] Display a sortable list of all visible portals with full details about the team, resonators, shields, etc.
+// @description    [mobile-2013-07-16-230720] Display a sortable list of all visible portals with full details about the team, resonators, shields, etc.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
