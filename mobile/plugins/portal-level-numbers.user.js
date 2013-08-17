@@ -2,11 +2,11 @@
 // @id             iitc-plugin-portal-level-numbers@rongou
 // @name           IITC plugin: Portal Level Numbers
 // @category       Layer
-// @version        0.1.0.20130716.230720
+// @version        0.1.1.20130817.153349
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-16-230720] Show portal level numbers on map.
+// @description    [mobile-2013-08-17-153349] Show portal level numbers on map.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -27,7 +27,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 window.plugin.portalLevelNumbers = function() {};
 
 window.plugin.portalLevelNumbers.levelLayers = {};
-window.plugin.portalLevelNumbers.levelLayerGroup = new L.LayerGroup();
+window.plugin.portalLevelNumbers.levelLayerGroup = null;
 
 // Use portal add and remove event to control render of portal level numbers
 window.plugin.portalLevelNumbers.portalAdded = function(data) {
@@ -80,6 +80,8 @@ var setup =  function() {
             -webkit-text-size-adjust:none;\
           }")
   .appendTo("head");
+
+  window.plugin.portalLevelNumbers.levelLayerGroup = new L.LayerGroup();
 
   window.addLayerGroup('Portal Levels', window.plugin.portalLevelNumbers.levelLayerGroup, true);
 

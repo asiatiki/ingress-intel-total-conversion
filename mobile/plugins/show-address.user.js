@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-address@vita10gy
 // @name           IITC plugin: show portal address in sidebar
 // @category       Portal Info
-// @version        0.2.2.20130716.230720
+// @version        0.2.3.20130817.153349
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-16-230720] Portal address will show in the sidebar.
+// @description    [mobile-2013-08-17-153349] Portal address will show in the sidebar.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -31,8 +31,12 @@ window.plugin.portalAddress.portalDetail = function(data) {
   // country, so get rid of it. If the country is in the [2] then it
   // doesn't matter because address is usually short enough to fit.
   var d = data.portalDetails.portalV2;
-  var address = d.descriptiveText.ADDRESS.split(',').splice(0,3).join(',');
-  $('.imgpreview').append('<div id="address">'+address+'</div>');
+  var address = d.descriptiveText.ADDRESS;
+  if (address) {
+    address = address.split(',').splice(0,3).join(',');
+    $('.imgpreview').append('<div id="address">'+address+'</div>');
+  }
+
 }
 
 var setup =  function() {

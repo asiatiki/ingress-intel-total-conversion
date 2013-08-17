@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-linked-portals@fstopienski
 // @name           IITC plugin: Show linked portals
 // @category       Portal Info
-// @version        0.0.4.20130716.230720
+// @version        0.0.7.20130817.153349
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-16-230720] Tries to show the linked portals (image, name and address) in portal detail view and jump to linked portal on click
+// @description    [mobile-2013-08-17-153349] Tries to show the linked portals (image, name and address) in portal detail view and jump to linked portal on click
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -34,12 +34,16 @@ window.plugin.showLinkedPortal = function () {
 };
 
 window.plugin.showLinkedPortal.handleUpdate = function () {
-    if (!requests.isLastRequest('getThinnedEntitiesV2')) {
+    if (!requests.isLastRequest('getThinnedEntitiesV4')) {
         return;
     }
 }
 
 window.plugin.showLinkedPortal.portalDetail = function (data) {
+    // don't render linked portal data if portal is neutral.
+    // (the data can remain sometimes - when a portal decays?)
+    if (data.portalDetails.controllingTeam.team == 'NEUTRAL')
+        return;
 
     var d = data.portalDetails.portalV2,
         c = 1;

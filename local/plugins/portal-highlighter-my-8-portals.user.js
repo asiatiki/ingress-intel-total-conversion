@@ -2,11 +2,11 @@
 // @id             iitc-plugin-highlight-portals-my-8-portals@vita10gy
 // @name           IITC plugin: highlight my level 8's on portals
 // @category       Highlighter
-// @version        0.1.0.20130716.230658
+// @version        0.1.0.20130817.153348
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [local-2013-07-16-230658] Uses the fill color of the portals to denote portals you have a level 8 on.
+// @description    [local-2013-08-17-153348] Uses the fill color of the portals to denote portals you have a level 8 on.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

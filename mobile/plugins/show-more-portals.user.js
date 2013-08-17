@@ -2,11 +2,11 @@
 // @id             iitc-plugin-show-more-portals@jonatkins
 // @name           IITC plugin: Show more portals
 // @category       Tweaks
-// @version        0.1.0.20130716.230720
+// @version        0.1.2.20130817.153349
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-16-230720] Boost the detail level of portals shown on the map by one zoom level. Good for small screens. Likely to increase request failed errors on larger screens.
+// @description    [mobile-2013-08-17-153349] Boost the detail level of portals shown on the map by one zoom level. Good for small screens. Likely to increase request failed errors on larger screens.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -34,10 +34,15 @@ window.plugin.showMorePortals.setup  = function() {
   window.getPortalDataZoom = function() {
     var mapZoom = map.getZoom();
 
+    // on mobile (at least), the map zoom has been non-integer occasionally. fix it.
+    z = Math.floor(z);
+
     // yes, it is possible to increase this beyond "+1" - however, that will end up producing a rediculous number
     // of requests to the Niantic servers, giving many request failed errors/tile timeouts
     // (every increase by one requests four times as many data tiles)
-    var z = mapZoom + 1;
+    // UPDATE: due to the new smaller tiles used when zoomed out further (getThinnedEntitiesV4), it gets silly
+    // doing this when zoomed out. so only boost when zoomed in
+    var z = mapZoom > 12 ? mapZoom + 1 : mapZoom;
 
     // limiting the mazimum zoom level for data retrieval reduces the number of requests at high zoom levels
     // (as all portal data is retrieved at z=17, why retrieve multiple z=18 tiles when fewer z=17 would do?)

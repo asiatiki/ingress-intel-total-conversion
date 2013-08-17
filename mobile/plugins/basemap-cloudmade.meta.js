@@ -2,7 +2,7 @@
 // @id             iitc-plugin-cloudmade-maps
 // @name           IITC plugin: CloudMade.com maps
 // @category       Map Tiles
-// @version        0.0.1
+// @version        0.0.2
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @description    TEMPLATE PLUGIN - add back the CloudMade.com map layers. YOU WILL NEED TO EDIT THIS PLUGIN BEFORE IT WILL RUN
 // @include        https://www.ingress.com/intel*

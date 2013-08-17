@@ -2,10 +2,10 @@
 // @id             max-links@boombuler
 // @name           IITC plugin: Max Links
 // @category       Layer
-// @version        0.4.0.20130716.230720
+// @version        0.4.0.20130817.153349
 // @updateURL      none
 // @downloadURL    none
-// @description    [mobile-2013-07-16-230720] Calculates how to link the portals to create the maximum number of fields. Enable from the layer chooser.
+// @description    [mobile-2013-08-17-153349] Calculates how to link the portals to create a reasonably neat set of links/fields. Enable from the layer chooser. (Max Links is a poor name, but remains for historical reasons.)
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
