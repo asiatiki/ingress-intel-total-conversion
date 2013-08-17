@@ -9,7 +9,7 @@
     <string name="layer_chooser">Layer Chooser</string>
     <string name="locate">Get Location</string>
     <string name="local">local</string>
-    <string name="close">close</string>
+    <string name="close">Close</string>
     <string name="build_version">Build Version</string>
     <string name="iitc_version">IITC Version</string>
     <string name="about">About</string>
@@ -50,6 +50,7 @@
 	<string name="pref_enable_dev_mode">Enable developer mode</string>
 	<string name="pref_enable_dev_mode_sum">If enabled, all IITC sources will be loaded from external storage of the Android device.
 	    Please copy all sources from $IITC_folder/build/mobile/ to /sdcard/IITC_Mobile/dev/.</string>
+    <string name="pref_disable_splash">Disable Splash Screen</string>
     <string name="pref_select_iitc">IITC source</string>
     <string name="pref_select_iitc_sum">Load IITC main script from url or use local script. Currently used source:</string>
 
@@ -60,8 +61,18 @@
     <string name="menu_faction">Faction</string>
     <string name="menu_info">Info</string>
     <string name="menu_debug">Debug</string>
+    <string name="menu_search">Search</string>
     <string name="choose_account_to_login">Choose account to login</string>
     <string name="login_failed">Login failed.</string>
     <string name="search_hint">Search Locations</string>
-    <string name="menu_search">Search</string>
+    <string name="intent_error">Address could not be opened</string>
+    <string name="msg_copied">Copied to clipboard…</string>
+
+    <string name="tab_map">Map</string>
+    <string name="tab_share">Share</string>
+    <string name="tab_browser">Browser</string>
+
+    <string name="base_layers">Base Layers</string>
+    <string name="overlay_layers">Overlay Layers</string>
+    <string name="toggle_layer_selection">Deselect/Select all</string>
 </resources>

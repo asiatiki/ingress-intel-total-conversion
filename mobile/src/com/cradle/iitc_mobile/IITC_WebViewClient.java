@@ -40,28 +40,28 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class IITC_WebViewClient extends WebViewClient {
-    private static final ByteArrayInputStream style = new ByteArrayInputStream(
+
+    private static final ByteArrayInputStream STYLE = new ByteArrayInputStream(
             "body, #dashboard_container, #map_canvas { background: #000 !important; }"
                     .getBytes());
-    private static final ByteArrayInputStream empty = new ByteArrayInputStream(
+    private static final ByteArrayInputStream EMPTY = new ByteArrayInputStream(
             "".getBytes());
 
-    private WebResourceResponse iitcjs;
-    private String js = null;
-    private String iitc_path = null;
-    private final Context context;
+    private String mIitcScript = null;
+    private String mIitcPath = null;
+    private final Context mContext;
 
     public IITC_WebViewClient(Context c) {
-        this.context = c;
-        this.iitc_path = Environment.getExternalStorageDirectory().getPath()
+        this.mContext = c;
+        this.mIitcPath = Environment.getExternalStorageDirectory().getPath()
                 + "/IITC_Mobile/";
     }
 
     public String getIITCVersion() {
         String header = "";
-        if (js != null)
-            header = js.substring(js.indexOf("==UserScript=="),
-                    js.indexOf("==/UserScript=="));
+        if (mIitcScript != null)
+            header = mIitcScript.substring(mIitcScript.indexOf("==UserScript=="),
+                    mIitcScript.indexOf("==/UserScript=="));
         // remove new line comments
         header = header.replace("\n//", "");
         // get a list of key-value
@@ -88,16 +88,16 @@ public class IITC_WebViewClient extends WebViewClient {
         // storage
         Log.d("iitcm", "adding iitc main script");
         if (sharedPref.getBoolean("pref_dev_checkbox", false)) {
-            js = this.fileToString(iitc_path
+            js = this.fileToString(mIitcPath
                     + "dev/total-conversion-build.user.js", false);
             if (js.equals("false")) {
-                Toast.makeText(context, "File " + iitc_path +
+                Toast.makeText(mContext, "File " + mIitcPath +
                         "dev/total-conversion-build.user.js not found. " +
                         "Disable developer mode or add iitc files to the dev folder.",
                         Toast.LENGTH_LONG).show();
                 return;
             } else {
-                Toast.makeText(context, "Developer mode enabled",
+                Toast.makeText(mContext, "Developer mode enabled",
                         Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -122,7 +122,7 @@ public class IITC_WebViewClient extends WebViewClient {
             }
         }
 
-        PackageManager pm = context.getPackageManager();
+        PackageManager pm = mContext.getPackageManager();
         boolean hasMultitouch = pm
                 .hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN_MULTITOUCH);
         boolean forcedZoom = sharedPref.getBoolean("pref_user_zoom", false);
@@ -140,17 +140,14 @@ public class IITC_WebViewClient extends WebViewClient {
         }
         // add all plugins to the script...inject plugins + main script simultaneously
         js += parsePlugins();
-        this.js = js;
 
         // need to wrap the mobile iitc.js version in a document ready. IITC
         // expects to be injected after the DOM has been loaded completely.
         // Since the mobile client injects IITC by replacing the gen_dashboard
         // file, IITC runs to early. The document.ready delays IITC long enough
         // so it boots correctly.
-        js = "$(document).ready(function(){" + js + "});";
+        this.mIitcScript = "$(document).ready(function(){" + js + "});";
 
-        iitcjs = new WebResourceResponse("text/javascript", "UTF-8",
-                new ByteArrayInputStream(js.getBytes()));
     }
 
     // enable https
@@ -160,13 +157,23 @@ public class IITC_WebViewClient extends WebViewClient {
         handler.proceed();
     }
 
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        if (url.startsWith("http://www.ingress.com/intel")
+         || url.startsWith("https://www.ingress.com/intel")) {
+            Log.d("iitcm", "injecting iitc..");
+            view.loadUrl("javascript: " + this.mIitcScript);
+        }
+        super.onPageFinished(view, url);
+    }
+
     /**
      * this method is called automatically when the Google login form is opened.
      */
     @Override
     public void onReceivedLoginRequest(WebView view, String realm, String account, String args) {
         Log.d("iitcm", "Login requested: " + realm + " " + account + " " + args);
-        ((IITC_Mobile) context).onReceivedLoginRequest(this, view, realm, account, args);
+        ((IITC_Mobile) mContext).onReceivedLoginRequest(this, view, realm, account, args);
     }
 
     // parse all enabled iitc plugins
@@ -175,7 +182,7 @@ public class IITC_WebViewClient extends WebViewClient {
         String js = "";
         // get the plugin preferences
         SharedPreferences sharedPref = PreferenceManager
-                .getDefaultSharedPreferences(context);
+                .getDefaultSharedPreferences(mContext);
         boolean dev_enabled = sharedPref.getBoolean("pref_dev_checkbox", false);
 
         Map<String, ?> all_prefs = sharedPref.getAll();
@@ -185,10 +192,10 @@ public class IITC_WebViewClient extends WebViewClient {
             String plugin = entry.getKey();
             if (plugin.endsWith("user.js") && entry.getValue().toString().equals("true")) {
                 // load default iitc plugins
-                if (!plugin.startsWith(iitc_path)) {
+                if (!plugin.startsWith(mIitcPath)) {
                     Log.d("iitcm", "adding plugin " + plugin);
                     if (dev_enabled)
-                        js += this.removePluginWrapper(iitc_path + "dev/plugins/"
+                        js += this.removePluginWrapper(mIitcPath + "dev/plugins/"
                                 + plugin, false);
                     else
                         js += this.removePluginWrapper("plugins/" + plugin, true);
@@ -212,7 +219,7 @@ public class IITC_WebViewClient extends WebViewClient {
         String js = "";
         // load plugin from external storage if dev mode are enabled
         if (dev_enabled)
-            js = this.removePluginWrapper(iitc_path + "dev/user-location.user.js", false);
+            js = this.removePluginWrapper(mIitcPath + "dev/user-location.user.js", false);
         else
             // load plugin from asset folder
             js = this.removePluginWrapper("user-location.user.js", true);
@@ -236,7 +243,7 @@ public class IITC_WebViewClient extends WebViewClient {
             }
         } else {
             // load plugins from asset folder
-            AssetManager am = context.getAssets();
+            AssetManager am = mContext.getAssets();
             try {
                 s = new Scanner(am.open(file)).useDelimiter("\\A");
             } catch (IOException e) {
@@ -302,25 +309,28 @@ public class IITC_WebViewClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(final WebView view,
                                                       String url) {
         if (url.contains("/css/common.css")) {
-            return new WebResourceResponse("text/css", "UTF-8", style);
+            return new WebResourceResponse("text/css", "UTF-8", STYLE);
         } else if (url.contains("gen_dashboard.js")) {
-            Log.d("iitcm", "replacing gen_dashboard.js with iitc script");
-            Log.d("iitcm", "injecting iitc...");
-            return this.iitcjs;
+            // define initialize function to get rid of JS ReferenceError on intel page's 'onLoad'
+            String gen_dashboad_replacement = "window.initialize = function() {}";
+            return new WebResourceResponse("text/javascript", "UTF-8",
+                    new ByteArrayInputStream(gen_dashboad_replacement.getBytes()));
         } else if (url.contains("/css/ap_icons.css")
                 || url.contains("/css/map_icons.css")
+                || url.contains("/css/common.css")
                 || url.contains("/css/misc_icons.css")
                 || url.contains("/css/style_full.css")
                 || url.contains("/css/style_mobile.css")
                 || url.contains("/css/portalrender.css")
+                || url.contains("/css/portalrender_mobile.css")
                 || url.contains("js/analytics.js")
                 || url.contains("google-analytics.com/ga.js")) {
-            return new WebResourceResponse("text/plain", "UTF-8", empty);
+            return new WebResourceResponse("text/plain", "UTF-8", EMPTY);
         } else if (url.contains("/handshake")) {
             InputStream inject = injectHelper(view, url);
             if (inject == null) return super.shouldInterceptRequest(view, url);
             return new WebResourceResponse("text/html", "UTF-8", inject);
-        } else {
+	} else {
             return super.shouldInterceptRequest(view, url);
         }
     }
@@ -332,16 +342,16 @@ public class IITC_WebViewClient extends WebViewClient {
         android.webkit.CookieManager cm = android.webkit.CookieManager.getInstance();
         String cookie = cm.getCookie(urlString);
         SharedPreferences sharedPref = PreferenceManager
-                .getDefaultSharedPreferences(context);
+                .getDefaultSharedPreferences(mContext);
         try {
             InputStream script = null;
             if (sharedPref.getBoolean("pref_dev_checkbox", false)) {
-                String path = iitc_path + "dev/plugins/keys-import-inject.js";
+                String path = mIitcPath + "dev/plugins/keys-import-inject.js";
                 File f = new File(path);
                 script = new BufferedInputStream(new FileInputStream(f));
             } else {
                 String path = "plugins/keys-import-inject.js";
-                AssetManager am = context.getAssets();
+                AssetManager am = mContext.getAssets();
                 script = am.open(path);
             }
             URL url = new URL(urlString);
@@ -377,7 +387,7 @@ public class IITC_WebViewClient extends WebViewClient {
                 Log.d("iitcm",
                         "should be an internal clicked position link...reload script for: "
                                 + url);
-                ((IITC_Mobile) context).loadUrl(url);
+                ((IITC_Mobile) mContext).loadUrl(url);
             }
             if (url.contains("logout")) {
                 Log.d("iitcm", "logging out...set caching mode to default");
@@ -389,7 +399,7 @@ public class IITC_WebViewClient extends WebViewClient {
                     "no ingress intel link, start external app to load url: "
                             + url);
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            context.startActivity(intent);
+            mContext.startActivity(intent);
             return true;
         }
     }
